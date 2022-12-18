@@ -1,0 +1,123 @@
+version: '3.5'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /data/postgres
+    volumes:
+      - ./data:/data/postgres
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    restart: always
+  
+  redis:
+    image: redis:6.2-alpine
+    container_name: redis
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    volumes:
+      - ./data:/data/redis
+    command: redis-server --save 20 1 --loglevel warning
+    restart: always
+
+  indexer_01:
+    platform: linux/amd64
+    container_name: indexer_01
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+    image: indexer
+    build:
+      dockerfile: Dockerfile.Indexer
+      context: .
+      target: runner
+      args:
+        - DEFAULT_PORT = ${INDEXER_01_PORT}
+    ports:
+      - ${INDEXER_01_PORT}:${INDEXER_01_PORT}
+    links:
+      - postgres
+      - queue
+    depends_on:
+      - postgres
+      - queue
+    command: "indexer" 
+    restart: always
+  
+  indexer_02:
+    platform: linux/amd64
+    container_name: indexer_02
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+    image: indexer
+    build:
+      dockerfile: Dockerfile.Indexer
+      context: .
+      target: runner
+      args:
+        - DEFAULT_PORT = ${INDEXER_02_PORT}
+    ports:
+      - ${INDEXER_02_PORT}:${INDEXER_02_PORT}
+    links:
+      - postgres
+      - queue
+    depends_on:
+      - postgres
+      - queue
+    command: "indexer" 
+    restart: always
+    
+  server:
+    platform: linux/amd64
+    container_name: server
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+    image: server
+    build:
+      dockerfile: Dockerfile.Server
+      context: .
+      target: runner
+      args:
+        - DEFAULT_PORT = ${SERVER_PORT}
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    links:
+      - postgres
+    depends_on:
+      - postgres
+    command: "server" 
+    restart: always
+
+  queue:
+    platform: linux/amd64
+    container_name: queue
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+    image: queue
+    build:
+      dockerfile: Dockerfile.Queue
+      context: .
+      target: runner
+      args:
+        - DEFAULT_PORT = ${QUEUE_PORT}
+    ports:
+      - ${QUEUE_PORT}:${QUEUE_PORT}
+    links:
+      - postgres
+      - redis
+    depends_on:
+      - postgres
+      - redis
+    command: "queue" 
+    restart: always

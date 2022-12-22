@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
@@ -15,7 +17,9 @@ type Transaction struct {
 func (Transaction) Fields() []ent.Field {
 	return []ent.Field{
 		field.UUID("id", uuid.UUID{}).Default(uuid.New),
-		field.String("hash").Default("").Unique(),
+		field.String("hash").Unique(),
+		field.Time("time"),
+		field.Time("created_at").Default(time.Now()),
 	}
 }
 

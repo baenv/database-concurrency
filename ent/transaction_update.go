@@ -8,6 +8,7 @@ import (
 	"database-concurrency/ent/transaction"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -33,10 +34,22 @@ func (tu *TransactionUpdate) SetHash(s string) *TransactionUpdate {
 	return tu
 }
 
-// SetNillableHash sets the "hash" field if the given value is not nil.
-func (tu *TransactionUpdate) SetNillableHash(s *string) *TransactionUpdate {
-	if s != nil {
-		tu.SetHash(*s)
+// SetTime sets the "time" field.
+func (tu *TransactionUpdate) SetTime(t time.Time) *TransactionUpdate {
+	tu.mutation.SetTime(t)
+	return tu
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (tu *TransactionUpdate) SetCreatedAt(t time.Time) *TransactionUpdate {
+	tu.mutation.SetCreatedAt(t)
+	return tu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (tu *TransactionUpdate) SetNillableCreatedAt(t *time.Time) *TransactionUpdate {
+	if t != nil {
+		tu.SetCreatedAt(*t)
 	}
 	return tu
 }
@@ -121,6 +134,12 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.Hash(); ok {
 		_spec.SetField(transaction.FieldHash, field.TypeString, value)
 	}
+	if value, ok := tu.mutation.Time(); ok {
+		_spec.SetField(transaction.FieldTime, field.TypeTime, value)
+	}
+	if value, ok := tu.mutation.CreatedAt(); ok {
+		_spec.SetField(transaction.FieldCreatedAt, field.TypeTime, value)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{transaction.Label}
@@ -146,10 +165,22 @@ func (tuo *TransactionUpdateOne) SetHash(s string) *TransactionUpdateOne {
 	return tuo
 }
 
-// SetNillableHash sets the "hash" field if the given value is not nil.
-func (tuo *TransactionUpdateOne) SetNillableHash(s *string) *TransactionUpdateOne {
-	if s != nil {
-		tuo.SetHash(*s)
+// SetTime sets the "time" field.
+func (tuo *TransactionUpdateOne) SetTime(t time.Time) *TransactionUpdateOne {
+	tuo.mutation.SetTime(t)
+	return tuo
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (tuo *TransactionUpdateOne) SetCreatedAt(t time.Time) *TransactionUpdateOne {
+	tuo.mutation.SetCreatedAt(t)
+	return tuo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (tuo *TransactionUpdateOne) SetNillableCreatedAt(t *time.Time) *TransactionUpdateOne {
+	if t != nil {
+		tuo.SetCreatedAt(*t)
 	}
 	return tuo
 }
@@ -263,6 +294,12 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 	}
 	if value, ok := tuo.mutation.Hash(); ok {
 		_spec.SetField(transaction.FieldHash, field.TypeString, value)
+	}
+	if value, ok := tuo.mutation.Time(); ok {
+		_spec.SetField(transaction.FieldTime, field.TypeTime, value)
+	}
+	if value, ok := tuo.mutation.CreatedAt(); ok {
+		_spec.SetField(transaction.FieldCreatedAt, field.TypeTime, value)
 	}
 	_node = &Transaction{config: tuo.config}
 	_spec.Assign = _node.assignValues

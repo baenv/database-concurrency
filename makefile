@@ -1,3 +1,7 @@
+#!make
+include .env
+export $(shell sed 's/=.*//' .env)
+
 .PHONY: up
 up:
 	docker-compose up -d
@@ -12,3 +16,23 @@ force-remove-img: down
 
 .PHONY: up-latest
 up-latest: force-remove-img up
+
+.PHONY: ent-gen
+ent-gen: 
+	go generate ./ent 
+	
+.PHONY: migrate-new
+migrate-new:
+	go run -mod=mod ent/migrate/main.go postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@127.0.0.1:$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=disable ${name}
+	
+.PHONY: migrate-latest
+migrate-latest:
+	atlas migrate apply \
+  --dir "file://ent/migrate/migrations" \
+	-u "postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@127.0.0.1:$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=disable"
+	
+.PHONY: migrate-status
+migrate-status:
+	atlas migrate status \
+  --dir "file://ent/migrate/migrations" \
+	-u "postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@127.0.0.1:$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=disable"

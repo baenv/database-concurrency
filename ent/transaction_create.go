@@ -7,6 +7,7 @@ import (
 	"database-concurrency/ent/transaction"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -26,10 +27,22 @@ func (tc *TransactionCreate) SetHash(s string) *TransactionCreate {
 	return tc
 }
 
-// SetNillableHash sets the "hash" field if the given value is not nil.
-func (tc *TransactionCreate) SetNillableHash(s *string) *TransactionCreate {
-	if s != nil {
-		tc.SetHash(*s)
+// SetTime sets the "time" field.
+func (tc *TransactionCreate) SetTime(t time.Time) *TransactionCreate {
+	tc.mutation.SetTime(t)
+	return tc
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (tc *TransactionCreate) SetCreatedAt(t time.Time) *TransactionCreate {
+	tc.mutation.SetCreatedAt(t)
+	return tc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (tc *TransactionCreate) SetNillableCreatedAt(t *time.Time) *TransactionCreate {
+	if t != nil {
+		tc.SetCreatedAt(*t)
 	}
 	return tc
 }
@@ -125,9 +138,9 @@ func (tc *TransactionCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tc *TransactionCreate) defaults() {
-	if _, ok := tc.mutation.Hash(); !ok {
-		v := transaction.DefaultHash
-		tc.mutation.SetHash(v)
+	if _, ok := tc.mutation.CreatedAt(); !ok {
+		v := transaction.DefaultCreatedAt
+		tc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := tc.mutation.ID(); !ok {
 		v := transaction.DefaultID()
@@ -139,6 +152,12 @@ func (tc *TransactionCreate) defaults() {
 func (tc *TransactionCreate) check() error {
 	if _, ok := tc.mutation.Hash(); !ok {
 		return &ValidationError{Name: "hash", err: errors.New(`ent: missing required field "Transaction.hash"`)}
+	}
+	if _, ok := tc.mutation.Time(); !ok {
+		return &ValidationError{Name: "time", err: errors.New(`ent: missing required field "Transaction.time"`)}
+	}
+	if _, ok := tc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Transaction.created_at"`)}
 	}
 	return nil
 }
@@ -179,6 +198,14 @@ func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Hash(); ok {
 		_spec.SetField(transaction.FieldHash, field.TypeString, value)
 		_node.Hash = value
+	}
+	if value, ok := tc.mutation.Time(); ok {
+		_spec.SetField(transaction.FieldTime, field.TypeTime, value)
+		_node.Time = value
+	}
+	if value, ok := tc.mutation.CreatedAt(); ok {
+		_spec.SetField(transaction.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
 	}
 	return _node, _spec
 }

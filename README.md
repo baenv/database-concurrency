@@ -21,9 +21,11 @@
 
 ### Commands
 
-- `up`: start all components using `docker-compose`.
-- `up-latest`: like `up` but re-build docker images.
-- `down`: stop all components.
+- `make up`: start all components using `docker-compose`.
+- `make up-latest`: like `up` but re-build docker images.
+- `make down`: stop all components.
+- `make ent-gen`: generate new ent from definition at `ent/schema`
+- `make migrate-new name=<name>`: check different and generate file migration with the given name.
 
 ## Usage
 

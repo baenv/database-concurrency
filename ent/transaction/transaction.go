@@ -3,6 +3,8 @@
 package transaction
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 )
 
@@ -13,6 +15,10 @@ const (
 	FieldID = "id"
 	// FieldHash holds the string denoting the hash field in the database.
 	FieldHash = "hash"
+	// FieldTime holds the string denoting the time field in the database.
+	FieldTime = "time"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
 	// Table holds the table name of the transaction in the database.
 	Table = "transactions"
 )
@@ -21,6 +27,8 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldHash,
+	FieldTime,
+	FieldCreatedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -34,8 +42,8 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultHash holds the default value on creation for the "hash" field.
-	DefaultHash string
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

@@ -5,6 +5,7 @@ package ent
 import (
 	"database-concurrency/ent/schema"
 	"database-concurrency/ent/transaction"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -15,10 +16,10 @@ import (
 func init() {
 	transactionFields := schema.Transaction{}.Fields()
 	_ = transactionFields
-	// transactionDescHash is the schema descriptor for hash field.
-	transactionDescHash := transactionFields[1].Descriptor()
-	// transaction.DefaultHash holds the default value on creation for the hash field.
-	transaction.DefaultHash = transactionDescHash.Default.(string)
+	// transactionDescCreatedAt is the schema descriptor for created_at field.
+	transactionDescCreatedAt := transactionFields[3].Descriptor()
+	// transaction.DefaultCreatedAt holds the default value on creation for the created_at field.
+	transaction.DefaultCreatedAt = transactionDescCreatedAt.Default.(time.Time)
 	// transactionDescID is the schema descriptor for id field.
 	transactionDescID := transactionFields[0].Descriptor()
 	// transaction.DefaultID holds the default value on creation for the id field.

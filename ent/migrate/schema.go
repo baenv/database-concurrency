@@ -11,7 +11,9 @@ var (
 	// TransactionsColumns holds the columns for the "transactions" table.
 	TransactionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
-		{Name: "hash", Type: field.TypeString, Default: ""},
+		{Name: "hash", Type: field.TypeString, Unique: true},
+		{Name: "time", Type: field.TypeTime},
+		{Name: "created_at", Type: field.TypeTime},
 	}
 	// TransactionsTable holds the schema information for the "transactions" table.
 	TransactionsTable = &schema.Table{

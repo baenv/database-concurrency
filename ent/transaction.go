@@ -6,6 +6,7 @@ import (
 	"database-concurrency/ent/transaction"
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
@@ -18,6 +19,10 @@ type Transaction struct {
 	ID uuid.UUID `json:"id,omitempty"`
 	// Hash holds the value of the "hash" field.
 	Hash string `json:"hash,omitempty"`
+	// Time holds the value of the "time" field.
+	Time time.Time `json:"time,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -27,6 +32,8 @@ func (*Transaction) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case transaction.FieldHash:
 			values[i] = new(sql.NullString)
+		case transaction.FieldTime, transaction.FieldCreatedAt:
+			values[i] = new(sql.NullTime)
 		case transaction.FieldID:
 			values[i] = new(uuid.UUID)
 		default:
@@ -55,6 +62,18 @@ func (t *Transaction) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field hash", values[i])
 			} else if value.Valid {
 				t.Hash = value.String
+			}
+		case transaction.FieldTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field time", values[i])
+			} else if value.Valid {
+				t.Time = value.Time
+			}
+		case transaction.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				t.CreatedAt = value.Time
 			}
 		}
 	}
@@ -86,6 +105,12 @@ func (t *Transaction) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v, ", t.ID))
 	builder.WriteString("hash=")
 	builder.WriteString(t.Hash)
+	builder.WriteString(", ")
+	builder.WriteString("time=")
+	builder.WriteString(t.Time.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(t.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

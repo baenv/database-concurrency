@@ -28,7 +28,7 @@ func NewBookingTransducer(setupConfig *Config, childTransducers ...Transducer) *
 				AddEffect(EmailClient)
 		},
 
-		{Booked, CheckOut}: func() *Outputs {
+		{CheckedIn, CheckOut}: func() *Outputs {
 			return CreateOutputs().SetState(CheckedOut).
 				AddEffect(UpdateBookingStatus).
 				AddEffect(EmailClient)

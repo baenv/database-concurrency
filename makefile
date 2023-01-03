@@ -36,3 +36,7 @@ migrate-status:
 	atlas migrate status \
   --dir "file://ent/migrate/migrations" \
 	-u "postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@127.0.0.1:$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=disable"
+	
+.PHONY: ent-init
+ent-init: 
+	go run -mod=mod entgo.io/ent/cmd/ent init ${name}

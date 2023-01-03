@@ -139,7 +139,7 @@ func (tc *TransactionCreate) ExecX(ctx context.Context) {
 // defaults sets the default values of the builder before save.
 func (tc *TransactionCreate) defaults() {
 	if _, ok := tc.mutation.CreatedAt(); !ok {
-		v := transaction.DefaultCreatedAt
+		v := transaction.DefaultCreatedAt()
 		tc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := tc.mutation.ID(); !ok {

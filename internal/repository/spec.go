@@ -8,7 +8,11 @@ import (
 
 	"database-concurrency/config"
 	"database-concurrency/ent"
+	serviceproviderRepo "database-concurrency/internal/repository/serviceprovider"
+	ticketRepo "database-concurrency/internal/repository/ticket"
+	ticketeventRepo "database-concurrency/internal/repository/ticketevent"
 	transactionRepo "database-concurrency/internal/repository/transaction"
+	userRepo "database-concurrency/internal/repository/user"
 
 	"ariga.io/atlas/sql/migrate"
 	atlas "ariga.io/atlas/sql/schema"
@@ -22,6 +26,10 @@ import (
 type Repositoy interface {
 	Pg() *ent.Client
 	Transaction() transactionRepo.Repository
+	User() userRepo.Repository
+	ServiceProvider() serviceproviderRepo.Repository
+	Ticket() ticketRepo.Repository
+	TicketEvent() ticketeventRepo.Repository
 }
 
 // New is used to create new repository
@@ -29,6 +37,12 @@ func New(pg *ent.Client) (Repositoy, error) {
 	return &db{
 		pg:          pg,
 		transaction: transactionRepo.NewPGRepo(pg),
+
+		// Booking service
+		user:            userRepo.NewPGRepo(pg),
+		serviceProvider: serviceproviderRepo.NewPGRepo(pg),
+		ticket:          ticketRepo.NewPGRepo(pg),
+		ticketEvent:     ticketeventRepo.NewPGRepo(pg),
 	}, nil
 }
 

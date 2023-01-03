@@ -26,6 +26,13 @@
 - `make down`: stop all components.
 - `make ent-gen`: generate new ent from definition at `ent/schema`
 - `make migrate-new name=<name>`: check different and generate file migration with the given name.
+- `make ent-init name=<name>` init new schema.
+
+## How can I migrate new change?
+
+- If you want to add new table/schema, run `make ent-init name=Name` to generate new schema file. Or modify `./ent/schema/<name>.go` for new change.
+- Run `make ent-gen` to gen ent components for new changes.
+- Run `make migrate-new name=<name>` to compare change between ent schema and DB to generate proper migration file.
 
 ## Usage
 

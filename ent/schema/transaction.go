@@ -19,7 +19,7 @@ func (Transaction) Fields() []ent.Field {
 		field.UUID("id", uuid.UUID{}).Default(uuid.New),
 		field.String("hash").Unique(),
 		field.Time("time"),
-		field.Time("created_at").Default(time.Now()),
+		field.Time("created_at").Default(time.Now),
 	}
 }
 

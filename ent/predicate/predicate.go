@@ -6,5 +6,17 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// ServiceProdiver is the predicate function for serviceprodiver builders.
+type ServiceProdiver func(*sql.Selector)
+
+// Ticket is the predicate function for ticket builders.
+type Ticket func(*sql.Selector)
+
+// TicketEvent is the predicate function for ticketevent builders.
+type TicketEvent func(*sql.Selector)
+
 // Transaction is the predicate function for transaction builders.
 type Transaction func(*sql.Selector)
+
+// User is the predicate function for user builders.
+type User func(*sql.Selector)

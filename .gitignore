@@ -3,7 +3,9 @@
 *.exe~
 *.dll
 *.so
-*.dylib
+*.
+ent/migrate/.DS_Store
+ent/migrate/migrations/.DS_Store
 
 # Test binary, built with `go test -c`
 *.test

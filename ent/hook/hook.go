@@ -8,6 +8,45 @@ import (
 	"fmt"
 )
 
+// The ServiceProdiverFunc type is an adapter to allow the use of ordinary
+// function as ServiceProdiver mutator.
+type ServiceProdiverFunc func(context.Context, *ent.ServiceProdiverMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ServiceProdiverFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ServiceProdiverMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ServiceProdiverMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The TicketFunc type is an adapter to allow the use of ordinary
+// function as Ticket mutator.
+type TicketFunc func(context.Context, *ent.TicketMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TicketFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.TicketMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TicketMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The TicketEventFunc type is an adapter to allow the use of ordinary
+// function as TicketEvent mutator.
+type TicketEventFunc func(context.Context, *ent.TicketEventMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TicketEventFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.TicketEventMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TicketEventMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The TransactionFunc type is an adapter to allow the use of ordinary
 // function as Transaction mutator.
 type TransactionFunc func(context.Context, *ent.TransactionMutation) (ent.Value, error)
@@ -17,6 +56,19 @@ func (f TransactionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	mv, ok := m.(*ent.TransactionMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TransactionMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The UserFunc type is an adapter to allow the use of ordinary
+// function as User mutator.
+type UserFunc func(context.Context, *ent.UserMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UserMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserMutation", m)
 	}
 	return f(ctx, mv)
 }

@@ -47,6 +47,20 @@ func (tc *TicketCreate) SetVersions(s string) *TicketCreate {
 	return tc
 }
 
+// SetLastEventID sets the "last_event_id" field.
+func (tc *TicketCreate) SetLastEventID(u uuid.UUID) *TicketCreate {
+	tc.mutation.SetLastEventID(u)
+	return tc
+}
+
+// SetNillableLastEventID sets the "last_event_id" field if the given value is not nil.
+func (tc *TicketCreate) SetNillableLastEventID(u *uuid.UUID) *TicketCreate {
+	if u != nil {
+		tc.SetLastEventID(*u)
+	}
+	return tc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (tc *TicketCreate) SetCreatedAt(t time.Time) *TicketCreate {
 	tc.mutation.SetCreatedAt(t)
@@ -92,6 +106,11 @@ func (tc *TicketCreate) SetNillableID(u *uuid.UUID) *TicketCreate {
 // SetUser sets the "user" edge to the User entity.
 func (tc *TicketCreate) SetUser(u *User) *TicketCreate {
 	return tc.SetUserID(u.ID)
+}
+
+// SetLastEvent sets the "last_event" edge to the TicketEvent entity.
+func (tc *TicketCreate) SetLastEvent(t *TicketEvent) *TicketCreate {
+	return tc.SetLastEventID(t.ID)
 }
 
 // AddTicketEventIDs adds the "ticket_events" edge to the TicketEvent entity by IDs.
@@ -297,6 +316,26 @@ func (tc *TicketCreate) createSpec() (*Ticket, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.UserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tc.mutation.LastEventIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   ticket.LastEventTable,
+			Columns: []string{ticket.LastEventColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: ticketevent.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.LastEventID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := tc.mutation.TicketEventsIDs(); len(nodes) > 0 {

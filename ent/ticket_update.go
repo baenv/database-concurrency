@@ -55,6 +55,26 @@ func (tu *TicketUpdate) SetVersions(s string) *TicketUpdate {
 	return tu
 }
 
+// SetLastEventID sets the "last_event_id" field.
+func (tu *TicketUpdate) SetLastEventID(u uuid.UUID) *TicketUpdate {
+	tu.mutation.SetLastEventID(u)
+	return tu
+}
+
+// SetNillableLastEventID sets the "last_event_id" field if the given value is not nil.
+func (tu *TicketUpdate) SetNillableLastEventID(u *uuid.UUID) *TicketUpdate {
+	if u != nil {
+		tu.SetLastEventID(*u)
+	}
+	return tu
+}
+
+// ClearLastEventID clears the value of the "last_event_id" field.
+func (tu *TicketUpdate) ClearLastEventID() *TicketUpdate {
+	tu.mutation.ClearLastEventID()
+	return tu
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (tu *TicketUpdate) SetCreatedAt(t time.Time) *TicketUpdate {
 	tu.mutation.SetCreatedAt(t)
@@ -80,6 +100,11 @@ func (tu *TicketUpdate) SetUser(u *User) *TicketUpdate {
 	return tu.SetUserID(u.ID)
 }
 
+// SetLastEvent sets the "last_event" edge to the TicketEvent entity.
+func (tu *TicketUpdate) SetLastEvent(t *TicketEvent) *TicketUpdate {
+	return tu.SetLastEventID(t.ID)
+}
+
 // AddTicketEventIDs adds the "ticket_events" edge to the TicketEvent entity by IDs.
 func (tu *TicketUpdate) AddTicketEventIDs(ids ...uuid.UUID) *TicketUpdate {
 	tu.mutation.AddTicketEventIDs(ids...)
@@ -103,6 +128,12 @@ func (tu *TicketUpdate) Mutation() *TicketMutation {
 // ClearUser clears the "user" edge to the User entity.
 func (tu *TicketUpdate) ClearUser() *TicketUpdate {
 	tu.mutation.ClearUser()
+	return tu
+}
+
+// ClearLastEvent clears the "last_event" edge to the TicketEvent entity.
+func (tu *TicketUpdate) ClearLastEvent() *TicketUpdate {
+	tu.mutation.ClearLastEvent()
 	return tu
 }
 
@@ -272,6 +303,41 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if tu.mutation.LastEventCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   ticket.LastEventTable,
+			Columns: []string{ticket.LastEventColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: ticketevent.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.LastEventIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   ticket.LastEventTable,
+			Columns: []string{ticket.LastEventColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: ticketevent.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if tu.mutation.TicketEventsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -369,6 +435,26 @@ func (tuo *TicketUpdateOne) SetVersions(s string) *TicketUpdateOne {
 	return tuo
 }
 
+// SetLastEventID sets the "last_event_id" field.
+func (tuo *TicketUpdateOne) SetLastEventID(u uuid.UUID) *TicketUpdateOne {
+	tuo.mutation.SetLastEventID(u)
+	return tuo
+}
+
+// SetNillableLastEventID sets the "last_event_id" field if the given value is not nil.
+func (tuo *TicketUpdateOne) SetNillableLastEventID(u *uuid.UUID) *TicketUpdateOne {
+	if u != nil {
+		tuo.SetLastEventID(*u)
+	}
+	return tuo
+}
+
+// ClearLastEventID clears the value of the "last_event_id" field.
+func (tuo *TicketUpdateOne) ClearLastEventID() *TicketUpdateOne {
+	tuo.mutation.ClearLastEventID()
+	return tuo
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (tuo *TicketUpdateOne) SetCreatedAt(t time.Time) *TicketUpdateOne {
 	tuo.mutation.SetCreatedAt(t)
@@ -394,6 +480,11 @@ func (tuo *TicketUpdateOne) SetUser(u *User) *TicketUpdateOne {
 	return tuo.SetUserID(u.ID)
 }
 
+// SetLastEvent sets the "last_event" edge to the TicketEvent entity.
+func (tuo *TicketUpdateOne) SetLastEvent(t *TicketEvent) *TicketUpdateOne {
+	return tuo.SetLastEventID(t.ID)
+}
+
 // AddTicketEventIDs adds the "ticket_events" edge to the TicketEvent entity by IDs.
 func (tuo *TicketUpdateOne) AddTicketEventIDs(ids ...uuid.UUID) *TicketUpdateOne {
 	tuo.mutation.AddTicketEventIDs(ids...)
@@ -417,6 +508,12 @@ func (tuo *TicketUpdateOne) Mutation() *TicketMutation {
 // ClearUser clears the "user" edge to the User entity.
 func (tuo *TicketUpdateOne) ClearUser() *TicketUpdateOne {
 	tuo.mutation.ClearUser()
+	return tuo
+}
+
+// ClearLastEvent clears the "last_event" edge to the TicketEvent entity.
+func (tuo *TicketUpdateOne) ClearLastEvent() *TicketUpdateOne {
+	tuo.mutation.ClearLastEvent()
 	return tuo
 }
 
@@ -608,6 +705,41 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeUUID,
 					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.LastEventCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   ticket.LastEventTable,
+			Columns: []string{ticket.LastEventColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: ticketevent.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.LastEventIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   ticket.LastEventTable,
+			Columns: []string{ticket.LastEventColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: ticketevent.FieldID,
 				},
 			},
 		}

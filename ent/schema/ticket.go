@@ -23,6 +23,7 @@ func (Ticket) Fields() []ent.Field {
 		field.UUID("user_id", uuid.UUID{}),
 		field.JSON("metadata", map[string]interface{}{}),
 		field.String("versions"),
+		field.UUID("last_event_id", uuid.UUID{}).Optional(),
 		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),
 	}
@@ -35,6 +36,9 @@ func (Ticket) Edges() []ent.Edge {
 			Ref("tickets").
 			Field("user_id").
 			Required().
+			Unique(),
+		edge.To("last_event", TicketEvent.Type).
+			Field("last_event_id").
 			Unique(),
 		edge.To("ticket_events", TicketEvent.Type).
 			Annotations(

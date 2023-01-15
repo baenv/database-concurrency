@@ -32,6 +32,7 @@ var (
 		{Name: "versions", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "last_event_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "user_id", Type: field.TypeUUID},
 	}
 	// TicketsTable holds the schema information for the "tickets" table.
@@ -41,8 +42,14 @@ var (
 		PrimaryKey: []*schema.Column{TicketsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "tickets_users_tickets",
+				Symbol:     "tickets_ticket_events_last_event",
 				Columns:    []*schema.Column{TicketsColumns[6]},
+				RefColumns: []*schema.Column{TicketEventsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "tickets_users_tickets",
+				Columns:    []*schema.Column{TicketsColumns[7]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -118,7 +125,8 @@ var (
 )
 
 func init() {
-	TicketsTable.ForeignKeys[0].RefTable = UsersTable
+	TicketsTable.ForeignKeys[0].RefTable = TicketEventsTable
+	TicketsTable.ForeignKeys[1].RefTable = UsersTable
 	TicketEventsTable.ForeignKeys[0].RefTable = TicketsTable
 	TicketEventsTable.ForeignKeys[1].RefTable = UsersTable
 }

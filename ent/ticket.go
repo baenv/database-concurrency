@@ -4,6 +4,7 @@ package ent
 
 import (
 	"database-concurrency/ent/ticket"
+	"database-concurrency/ent/ticketevent"
 	"database-concurrency/ent/user"
 	"encoding/json"
 	"fmt"
@@ -27,6 +28,8 @@ type Ticket struct {
 	Metadata map[string]interface{} `json:"metadata,omitempty"`
 	// Versions holds the value of the "versions" field.
 	Versions string `json:"versions,omitempty"`
+	// LastEventID holds the value of the "last_event_id" field.
+	LastEventID uuid.UUID `json:"last_event_id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -40,11 +43,13 @@ type Ticket struct {
 type TicketEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
+	// LastEvent holds the value of the last_event edge.
+	LastEvent *TicketEvent `json:"last_event,omitempty"`
 	// TicketEvents holds the value of the ticket_events edge.
 	TicketEvents []*TicketEvent `json:"ticket_events,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -60,10 +65,23 @@ func (e TicketEdges) UserOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "user"}
 }
 
+// LastEventOrErr returns the LastEvent value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TicketEdges) LastEventOrErr() (*TicketEvent, error) {
+	if e.loadedTypes[1] {
+		if e.LastEvent == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: ticketevent.Label}
+		}
+		return e.LastEvent, nil
+	}
+	return nil, &NotLoadedError{edge: "last_event"}
+}
+
 // TicketEventsOrErr returns the TicketEvents value or an error if the edge
 // was not loaded in eager-loading.
 func (e TicketEdges) TicketEventsOrErr() ([]*TicketEvent, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		return e.TicketEvents, nil
 	}
 	return nil, &NotLoadedError{edge: "ticket_events"}
@@ -80,7 +98,7 @@ func (*Ticket) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case ticket.FieldCreatedAt, ticket.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case ticket.FieldID, ticket.FieldUserID:
+		case ticket.FieldID, ticket.FieldUserID, ticket.FieldLastEventID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Ticket", columns[i])
@@ -129,6 +147,12 @@ func (t *Ticket) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.Versions = value.String
 			}
+		case ticket.FieldLastEventID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field last_event_id", values[i])
+			} else if value != nil {
+				t.LastEventID = *value
+			}
 		case ticket.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -149,6 +173,11 @@ func (t *Ticket) assignValues(columns []string, values []any) error {
 // QueryUser queries the "user" edge of the Ticket entity.
 func (t *Ticket) QueryUser() *UserQuery {
 	return (&TicketClient{config: t.config}).QueryUser(t)
+}
+
+// QueryLastEvent queries the "last_event" edge of the Ticket entity.
+func (t *Ticket) QueryLastEvent() *TicketEventQuery {
+	return (&TicketClient{config: t.config}).QueryLastEvent(t)
 }
 
 // QueryTicketEvents queries the "ticket_events" edge of the Ticket entity.
@@ -190,6 +219,9 @@ func (t *Ticket) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("versions=")
 	builder.WriteString(t.Versions)
+	builder.WriteString(", ")
+	builder.WriteString("last_event_id=")
+	builder.WriteString(fmt.Sprintf("%v", t.LastEventID))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(t.CreatedAt.Format(time.ANSIC))

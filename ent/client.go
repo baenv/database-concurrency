@@ -344,6 +344,22 @@ func (c *TicketClient) QueryUser(t *Ticket) *UserQuery {
 	return query
 }
 
+// QueryLastEvent queries the last_event edge of a Ticket.
+func (c *TicketClient) QueryLastEvent(t *Ticket) *TicketEventQuery {
+	query := &TicketEventQuery{config: c.config}
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(ticket.Table, ticket.FieldID, id),
+			sqlgraph.To(ticketevent.Table, ticketevent.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, ticket.LastEventTable, ticket.LastEventColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryTicketEvents queries the ticket_events edge of a Ticket.
 func (c *TicketClient) QueryTicketEvents(t *Ticket) *TicketEventQuery {
 	query := &TicketEventQuery{config: c.config}

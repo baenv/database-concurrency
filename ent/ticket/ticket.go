@@ -21,12 +21,16 @@ const (
 	FieldMetadata = "metadata"
 	// FieldVersions holds the string denoting the versions field in the database.
 	FieldVersions = "versions"
+	// FieldLastEventID holds the string denoting the last_event_id field in the database.
+	FieldLastEventID = "last_event_id"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
+	// EdgeLastEvent holds the string denoting the last_event edge name in mutations.
+	EdgeLastEvent = "last_event"
 	// EdgeTicketEvents holds the string denoting the ticket_events edge name in mutations.
 	EdgeTicketEvents = "ticket_events"
 	// Table holds the table name of the ticket in the database.
@@ -38,6 +42,13 @@ const (
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
 	UserColumn = "user_id"
+	// LastEventTable is the table that holds the last_event relation/edge.
+	LastEventTable = "tickets"
+	// LastEventInverseTable is the table name for the TicketEvent entity.
+	// It exists in this package in order to avoid circular dependency with the "ticketevent" package.
+	LastEventInverseTable = "ticket_events"
+	// LastEventColumn is the table column denoting the last_event relation/edge.
+	LastEventColumn = "last_event_id"
 	// TicketEventsTable is the table that holds the ticket_events relation/edge.
 	TicketEventsTable = "ticket_events"
 	// TicketEventsInverseTable is the table name for the TicketEvent entity.
@@ -54,6 +65,7 @@ var Columns = []string{
 	FieldUserID,
 	FieldMetadata,
 	FieldVersions,
+	FieldLastEventID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }

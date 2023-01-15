@@ -103,6 +103,13 @@ func Versions(v string) predicate.Ticket {
 	})
 }
 
+// LastEventID applies equality check predicate on the "last_event_id" field. It's identical to LastEventIDEQ.
+func LastEventID(v uuid.UUID) predicate.Ticket {
+	return predicate.Ticket(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLastEventID), v))
+	})
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Ticket {
 	return predicate.Ticket(func(s *sql.Selector) {
@@ -351,6 +358,56 @@ func VersionsContainsFold(v string) predicate.Ticket {
 	})
 }
 
+// LastEventIDEQ applies the EQ predicate on the "last_event_id" field.
+func LastEventIDEQ(v uuid.UUID) predicate.Ticket {
+	return predicate.Ticket(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLastEventID), v))
+	})
+}
+
+// LastEventIDNEQ applies the NEQ predicate on the "last_event_id" field.
+func LastEventIDNEQ(v uuid.UUID) predicate.Ticket {
+	return predicate.Ticket(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldLastEventID), v))
+	})
+}
+
+// LastEventIDIn applies the In predicate on the "last_event_id" field.
+func LastEventIDIn(vs ...uuid.UUID) predicate.Ticket {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Ticket(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldLastEventID), v...))
+	})
+}
+
+// LastEventIDNotIn applies the NotIn predicate on the "last_event_id" field.
+func LastEventIDNotIn(vs ...uuid.UUID) predicate.Ticket {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Ticket(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldLastEventID), v...))
+	})
+}
+
+// LastEventIDIsNil applies the IsNil predicate on the "last_event_id" field.
+func LastEventIDIsNil() predicate.Ticket {
+	return predicate.Ticket(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldLastEventID)))
+	})
+}
+
+// LastEventIDNotNil applies the NotNil predicate on the "last_event_id" field.
+func LastEventIDNotNil() predicate.Ticket {
+	return predicate.Ticket(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldLastEventID)))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Ticket {
 	return predicate.Ticket(func(s *sql.Selector) {
@@ -498,6 +555,34 @@ func HasUserWith(preds ...predicate.User) predicate.Ticket {
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(UserInverseTable, FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasLastEvent applies the HasEdge predicate on the "last_event" edge.
+func HasLastEvent() predicate.Ticket {
+	return predicate.Ticket(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(LastEventTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, LastEventTable, LastEventColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasLastEventWith applies the HasEdge predicate on the "last_event" edge with a given conditions (other predicates).
+func HasLastEventWith(preds ...predicate.TicketEvent) predicate.Ticket {
+	return predicate.Ticket(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(LastEventInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, LastEventTable, LastEventColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

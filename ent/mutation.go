@@ -637,6 +637,8 @@ type TicketMutation struct {
 	clearedFields        map[string]struct{}
 	user                 *uuid.UUID
 	cleareduser          bool
+	last_event           *uuid.UUID
+	clearedlast_event    bool
 	ticket_events        map[uuid.UUID]struct{}
 	removedticket_events map[uuid.UUID]struct{}
 	clearedticket_events bool
@@ -893,6 +895,55 @@ func (m *TicketMutation) ResetVersions() {
 	m.versions = nil
 }
 
+// SetLastEventID sets the "last_event_id" field.
+func (m *TicketMutation) SetLastEventID(u uuid.UUID) {
+	m.last_event = &u
+}
+
+// LastEventID returns the value of the "last_event_id" field in the mutation.
+func (m *TicketMutation) LastEventID() (r uuid.UUID, exists bool) {
+	v := m.last_event
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastEventID returns the old "last_event_id" field's value of the Ticket entity.
+// If the Ticket object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TicketMutation) OldLastEventID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastEventID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastEventID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastEventID: %w", err)
+	}
+	return oldValue.LastEventID, nil
+}
+
+// ClearLastEventID clears the value of the "last_event_id" field.
+func (m *TicketMutation) ClearLastEventID() {
+	m.last_event = nil
+	m.clearedFields[ticket.FieldLastEventID] = struct{}{}
+}
+
+// LastEventIDCleared returns if the "last_event_id" field was cleared in this mutation.
+func (m *TicketMutation) LastEventIDCleared() bool {
+	_, ok := m.clearedFields[ticket.FieldLastEventID]
+	return ok
+}
+
+// ResetLastEventID resets all changes to the "last_event_id" field.
+func (m *TicketMutation) ResetLastEventID() {
+	m.last_event = nil
+	delete(m.clearedFields, ticket.FieldLastEventID)
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *TicketMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -991,6 +1042,32 @@ func (m *TicketMutation) ResetUser() {
 	m.cleareduser = false
 }
 
+// ClearLastEvent clears the "last_event" edge to the TicketEvent entity.
+func (m *TicketMutation) ClearLastEvent() {
+	m.clearedlast_event = true
+}
+
+// LastEventCleared reports if the "last_event" edge to the TicketEvent entity was cleared.
+func (m *TicketMutation) LastEventCleared() bool {
+	return m.LastEventIDCleared() || m.clearedlast_event
+}
+
+// LastEventIDs returns the "last_event" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// LastEventID instead. It exists only for internal usage by the builders.
+func (m *TicketMutation) LastEventIDs() (ids []uuid.UUID) {
+	if id := m.last_event; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetLastEvent resets all changes to the "last_event" edge.
+func (m *TicketMutation) ResetLastEvent() {
+	m.last_event = nil
+	m.clearedlast_event = false
+}
+
 // AddTicketEventIDs adds the "ticket_events" edge to the TicketEvent entity by ids.
 func (m *TicketMutation) AddTicketEventIDs(ids ...uuid.UUID) {
 	if m.ticket_events == nil {
@@ -1064,7 +1141,7 @@ func (m *TicketMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TicketMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.status != nil {
 		fields = append(fields, ticket.FieldStatus)
 	}
@@ -1076,6 +1153,9 @@ func (m *TicketMutation) Fields() []string {
 	}
 	if m.versions != nil {
 		fields = append(fields, ticket.FieldVersions)
+	}
+	if m.last_event != nil {
+		fields = append(fields, ticket.FieldLastEventID)
 	}
 	if m.created_at != nil {
 		fields = append(fields, ticket.FieldCreatedAt)
@@ -1099,6 +1179,8 @@ func (m *TicketMutation) Field(name string) (ent.Value, bool) {
 		return m.Metadata()
 	case ticket.FieldVersions:
 		return m.Versions()
+	case ticket.FieldLastEventID:
+		return m.LastEventID()
 	case ticket.FieldCreatedAt:
 		return m.CreatedAt()
 	case ticket.FieldUpdatedAt:
@@ -1120,6 +1202,8 @@ func (m *TicketMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldMetadata(ctx)
 	case ticket.FieldVersions:
 		return m.OldVersions(ctx)
+	case ticket.FieldLastEventID:
+		return m.OldLastEventID(ctx)
 	case ticket.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case ticket.FieldUpdatedAt:
@@ -1160,6 +1244,13 @@ func (m *TicketMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetVersions(v)
+		return nil
+	case ticket.FieldLastEventID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastEventID(v)
 		return nil
 	case ticket.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -1204,7 +1295,11 @@ func (m *TicketMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *TicketMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(ticket.FieldLastEventID) {
+		fields = append(fields, ticket.FieldLastEventID)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -1217,6 +1312,11 @@ func (m *TicketMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *TicketMutation) ClearField(name string) error {
+	switch name {
+	case ticket.FieldLastEventID:
+		m.ClearLastEventID()
+		return nil
+	}
 	return fmt.Errorf("unknown Ticket nullable field %s", name)
 }
 
@@ -1236,6 +1336,9 @@ func (m *TicketMutation) ResetField(name string) error {
 	case ticket.FieldVersions:
 		m.ResetVersions()
 		return nil
+	case ticket.FieldLastEventID:
+		m.ResetLastEventID()
+		return nil
 	case ticket.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -1248,9 +1351,12 @@ func (m *TicketMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TicketMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.user != nil {
 		edges = append(edges, ticket.EdgeUser)
+	}
+	if m.last_event != nil {
+		edges = append(edges, ticket.EdgeLastEvent)
 	}
 	if m.ticket_events != nil {
 		edges = append(edges, ticket.EdgeTicketEvents)
@@ -1266,6 +1372,10 @@ func (m *TicketMutation) AddedIDs(name string) []ent.Value {
 		if id := m.user; id != nil {
 			return []ent.Value{*id}
 		}
+	case ticket.EdgeLastEvent:
+		if id := m.last_event; id != nil {
+			return []ent.Value{*id}
+		}
 	case ticket.EdgeTicketEvents:
 		ids := make([]ent.Value, 0, len(m.ticket_events))
 		for id := range m.ticket_events {
@@ -1278,7 +1388,7 @@ func (m *TicketMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TicketMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedticket_events != nil {
 		edges = append(edges, ticket.EdgeTicketEvents)
 	}
@@ -1301,9 +1411,12 @@ func (m *TicketMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TicketMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.cleareduser {
 		edges = append(edges, ticket.EdgeUser)
+	}
+	if m.clearedlast_event {
+		edges = append(edges, ticket.EdgeLastEvent)
 	}
 	if m.clearedticket_events {
 		edges = append(edges, ticket.EdgeTicketEvents)
@@ -1317,6 +1430,8 @@ func (m *TicketMutation) EdgeCleared(name string) bool {
 	switch name {
 	case ticket.EdgeUser:
 		return m.cleareduser
+	case ticket.EdgeLastEvent:
+		return m.clearedlast_event
 	case ticket.EdgeTicketEvents:
 		return m.clearedticket_events
 	}
@@ -1330,6 +1445,9 @@ func (m *TicketMutation) ClearEdge(name string) error {
 	case ticket.EdgeUser:
 		m.ClearUser()
 		return nil
+	case ticket.EdgeLastEvent:
+		m.ClearLastEvent()
+		return nil
 	}
 	return fmt.Errorf("unknown Ticket unique edge %s", name)
 }
@@ -1340,6 +1458,9 @@ func (m *TicketMutation) ResetEdge(name string) error {
 	switch name {
 	case ticket.EdgeUser:
 		m.ResetUser()
+		return nil
+	case ticket.EdgeLastEvent:
+		m.ResetLastEvent()
 		return nil
 	case ticket.EdgeTicketEvents:
 		m.ResetTicketEvents()

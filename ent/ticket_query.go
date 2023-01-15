@@ -28,6 +28,7 @@ type TicketQuery struct {
 	fields           []string
 	predicates       []predicate.Ticket
 	withUser         *UserQuery
+	withLastEvent    *TicketEventQuery
 	withTicketEvents *TicketEventQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -80,6 +81,28 @@ func (tq *TicketQuery) QueryUser() *UserQuery {
 			sqlgraph.From(ticket.Table, ticket.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, ticket.UserTable, ticket.UserColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryLastEvent chains the current query on the "last_event" edge.
+func (tq *TicketQuery) QueryLastEvent() *TicketEventQuery {
+	query := &TicketEventQuery{config: tq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(ticket.Table, ticket.FieldID, selector),
+			sqlgraph.To(ticketevent.Table, ticketevent.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, ticket.LastEventTable, ticket.LastEventColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -291,6 +314,7 @@ func (tq *TicketQuery) Clone() *TicketQuery {
 		order:            append([]OrderFunc{}, tq.order...),
 		predicates:       append([]predicate.Ticket{}, tq.predicates...),
 		withUser:         tq.withUser.Clone(),
+		withLastEvent:    tq.withLastEvent.Clone(),
 		withTicketEvents: tq.withTicketEvents.Clone(),
 		// clone intermediate query.
 		sql:    tq.sql.Clone(),
@@ -307,6 +331,17 @@ func (tq *TicketQuery) WithUser(opts ...func(*UserQuery)) *TicketQuery {
 		opt(query)
 	}
 	tq.withUser = query
+	return tq
+}
+
+// WithLastEvent tells the query-builder to eager-load the nodes that are connected to
+// the "last_event" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TicketQuery) WithLastEvent(opts ...func(*TicketEventQuery)) *TicketQuery {
+	query := &TicketEventQuery{config: tq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	tq.withLastEvent = query
 	return tq
 }
 
@@ -396,8 +431,9 @@ func (tq *TicketQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ticke
 	var (
 		nodes       = []*Ticket{}
 		_spec       = tq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			tq.withUser != nil,
+			tq.withLastEvent != nil,
 			tq.withTicketEvents != nil,
 		}
 	)
@@ -422,6 +458,12 @@ func (tq *TicketQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ticke
 	if query := tq.withUser; query != nil {
 		if err := tq.loadUser(ctx, query, nodes, nil,
 			func(n *Ticket, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := tq.withLastEvent; query != nil {
+		if err := tq.loadLastEvent(ctx, query, nodes, nil,
+			func(n *Ticket, e *TicketEvent) { n.Edges.LastEvent = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -454,6 +496,32 @@ func (tq *TicketQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (tq *TicketQuery) loadLastEvent(ctx context.Context, query *TicketEventQuery, nodes []*Ticket, init func(*Ticket), assign func(*Ticket, *TicketEvent)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*Ticket)
+	for i := range nodes {
+		fk := nodes[i].LastEventID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	query.Where(ticketevent.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "last_event_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

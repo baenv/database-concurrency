@@ -295,6 +295,20 @@ func TypeContainsFold(v string) predicate.TicketEvent {
 	})
 }
 
+// MetadadaIsNil applies the IsNil predicate on the "metadada" field.
+func MetadadaIsNil() predicate.TicketEvent {
+	return predicate.TicketEvent(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldMetadada)))
+	})
+}
+
+// MetadadaNotNil applies the NotNil predicate on the "metadada" field.
+func MetadadaNotNil() predicate.TicketEvent {
+	return predicate.TicketEvent(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldMetadada)))
+	})
+}
+
 // VersionsEQ applies the EQ predicate on the "versions" field.
 func VersionsEQ(v string) predicate.TicketEvent {
 	return predicate.TicketEvent(func(s *sql.Selector) {
@@ -377,6 +391,20 @@ func VersionsHasPrefix(v string) predicate.TicketEvent {
 func VersionsHasSuffix(v string) predicate.TicketEvent {
 	return predicate.TicketEvent(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldVersions), v))
+	})
+}
+
+// VersionsIsNil applies the IsNil predicate on the "versions" field.
+func VersionsIsNil() predicate.TicketEvent {
+	return predicate.TicketEvent(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldVersions)))
+	})
+}
+
+// VersionsNotNil applies the NotNil predicate on the "versions" field.
+func VersionsNotNil() predicate.TicketEvent {
+	return predicate.TicketEvent(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldVersions)))
 	})
 }
 

@@ -28,8 +28,8 @@ var (
 	TicketsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "status", Type: field.TypeString},
-		{Name: "metadata", Type: field.TypeJSON},
-		{Name: "versions", Type: field.TypeString},
+		{Name: "metadata", Type: field.TypeJSON, Nullable: true},
+		{Name: "versions", Type: field.TypeString, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "last_event_id", Type: field.TypeUUID, Nullable: true},
@@ -59,8 +59,8 @@ var (
 	TicketEventsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "type", Type: field.TypeString},
-		{Name: "metadada", Type: field.TypeJSON},
-		{Name: "versions", Type: field.TypeString},
+		{Name: "metadada", Type: field.TypeJSON, Nullable: true},
+		{Name: "versions", Type: field.TypeString, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "ticket_id", Type: field.TypeUUID},

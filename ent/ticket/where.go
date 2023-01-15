@@ -259,6 +259,20 @@ func UserIDNotIn(vs ...uuid.UUID) predicate.Ticket {
 	})
 }
 
+// MetadataIsNil applies the IsNil predicate on the "metadata" field.
+func MetadataIsNil() predicate.Ticket {
+	return predicate.Ticket(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldMetadata)))
+	})
+}
+
+// MetadataNotNil applies the NotNil predicate on the "metadata" field.
+func MetadataNotNil() predicate.Ticket {
+	return predicate.Ticket(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldMetadata)))
+	})
+}
+
 // VersionsEQ applies the EQ predicate on the "versions" field.
 func VersionsEQ(v string) predicate.Ticket {
 	return predicate.Ticket(func(s *sql.Selector) {
@@ -341,6 +355,20 @@ func VersionsHasPrefix(v string) predicate.Ticket {
 func VersionsHasSuffix(v string) predicate.Ticket {
 	return predicate.Ticket(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldVersions), v))
+	})
+}
+
+// VersionsIsNil applies the IsNil predicate on the "versions" field.
+func VersionsIsNil() predicate.Ticket {
+	return predicate.Ticket(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldVersions)))
+	})
+}
+
+// VersionsNotNil applies the NotNil predicate on the "versions" field.
+func VersionsNotNil() predicate.Ticket {
+	return predicate.Ticket(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldVersions)))
 	})
 }
 

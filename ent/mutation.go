@@ -854,9 +854,22 @@ func (m *TicketMutation) OldMetadata(ctx context.Context) (v map[string]interfac
 	return oldValue.Metadata, nil
 }
 
+// ClearMetadata clears the value of the "metadata" field.
+func (m *TicketMutation) ClearMetadata() {
+	m.metadata = nil
+	m.clearedFields[ticket.FieldMetadata] = struct{}{}
+}
+
+// MetadataCleared returns if the "metadata" field was cleared in this mutation.
+func (m *TicketMutation) MetadataCleared() bool {
+	_, ok := m.clearedFields[ticket.FieldMetadata]
+	return ok
+}
+
 // ResetMetadata resets all changes to the "metadata" field.
 func (m *TicketMutation) ResetMetadata() {
 	m.metadata = nil
+	delete(m.clearedFields, ticket.FieldMetadata)
 }
 
 // SetVersions sets the "versions" field.
@@ -890,9 +903,22 @@ func (m *TicketMutation) OldVersions(ctx context.Context) (v string, err error) 
 	return oldValue.Versions, nil
 }
 
+// ClearVersions clears the value of the "versions" field.
+func (m *TicketMutation) ClearVersions() {
+	m.versions = nil
+	m.clearedFields[ticket.FieldVersions] = struct{}{}
+}
+
+// VersionsCleared returns if the "versions" field was cleared in this mutation.
+func (m *TicketMutation) VersionsCleared() bool {
+	_, ok := m.clearedFields[ticket.FieldVersions]
+	return ok
+}
+
 // ResetVersions resets all changes to the "versions" field.
 func (m *TicketMutation) ResetVersions() {
 	m.versions = nil
+	delete(m.clearedFields, ticket.FieldVersions)
 }
 
 // SetLastEventID sets the "last_event_id" field.
@@ -1296,6 +1322,12 @@ func (m *TicketMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *TicketMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(ticket.FieldMetadata) {
+		fields = append(fields, ticket.FieldMetadata)
+	}
+	if m.FieldCleared(ticket.FieldVersions) {
+		fields = append(fields, ticket.FieldVersions)
+	}
 	if m.FieldCleared(ticket.FieldLastEventID) {
 		fields = append(fields, ticket.FieldLastEventID)
 	}
@@ -1313,6 +1345,12 @@ func (m *TicketMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *TicketMutation) ClearField(name string) error {
 	switch name {
+	case ticket.FieldMetadata:
+		m.ClearMetadata()
+		return nil
+	case ticket.FieldVersions:
+		m.ClearVersions()
+		return nil
 	case ticket.FieldLastEventID:
 		m.ClearLastEventID()
 		return nil
@@ -1733,9 +1771,22 @@ func (m *TicketEventMutation) OldMetadada(ctx context.Context) (v map[string]int
 	return oldValue.Metadada, nil
 }
 
+// ClearMetadada clears the value of the "metadada" field.
+func (m *TicketEventMutation) ClearMetadada() {
+	m.metadada = nil
+	m.clearedFields[ticketevent.FieldMetadada] = struct{}{}
+}
+
+// MetadadaCleared returns if the "metadada" field was cleared in this mutation.
+func (m *TicketEventMutation) MetadadaCleared() bool {
+	_, ok := m.clearedFields[ticketevent.FieldMetadada]
+	return ok
+}
+
 // ResetMetadada resets all changes to the "metadada" field.
 func (m *TicketEventMutation) ResetMetadada() {
 	m.metadada = nil
+	delete(m.clearedFields, ticketevent.FieldMetadada)
 }
 
 // SetVersions sets the "versions" field.
@@ -1769,9 +1820,22 @@ func (m *TicketEventMutation) OldVersions(ctx context.Context) (v string, err er
 	return oldValue.Versions, nil
 }
 
+// ClearVersions clears the value of the "versions" field.
+func (m *TicketEventMutation) ClearVersions() {
+	m.versions = nil
+	m.clearedFields[ticketevent.FieldVersions] = struct{}{}
+}
+
+// VersionsCleared returns if the "versions" field was cleared in this mutation.
+func (m *TicketEventMutation) VersionsCleared() bool {
+	_, ok := m.clearedFields[ticketevent.FieldVersions]
+	return ok
+}
+
 // ResetVersions resets all changes to the "versions" field.
 func (m *TicketEventMutation) ResetVersions() {
 	m.versions = nil
+	delete(m.clearedFields, ticketevent.FieldVersions)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -2071,7 +2135,14 @@ func (m *TicketEventMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *TicketEventMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(ticketevent.FieldMetadada) {
+		fields = append(fields, ticketevent.FieldMetadada)
+	}
+	if m.FieldCleared(ticketevent.FieldVersions) {
+		fields = append(fields, ticketevent.FieldVersions)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -2084,6 +2155,14 @@ func (m *TicketEventMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *TicketEventMutation) ClearField(name string) error {
+	switch name {
+	case ticketevent.FieldMetadada:
+		m.ClearMetadada()
+		return nil
+	case ticketevent.FieldVersions:
+		m.ClearVersions()
+		return nil
+	}
 	return fmt.Errorf("unknown TicketEvent nullable field %s", name)
 }
 

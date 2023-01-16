@@ -2,7 +2,7 @@ package transducer
 
 func NewBookingTransducer(setupConfig *Config, childTransducers ...Transducer) *Transducer {
 	transitionTable := TransitionTable{
-		{Idle, Book}: func() *Outputs {
+		{Idle, Reserve}: func() *Outputs {
 			return CreateOutputs().SetState(Reserved).
 				AddEffect(UpdateBookingStatus).
 				AddEffect(EmailUser)

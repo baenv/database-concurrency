@@ -99,3 +99,35 @@ func Init(cfg config.Config) (Repositoy, error) {
 
 	return New(client)
 }
+
+func WithTx(ctx context.Context, client *ent.Client, fn func(repo Repositoy) error) error {
+	tx, err := client.Tx(ctx)
+	if err != nil {
+		return err
+	}
+
+	repo, err := New(tx.Client())
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if v := recover(); v != nil {
+			tx.Rollback()
+			panic(v)
+		}
+	}()
+
+	if err := fn(repo); err != nil {
+		if rerr := tx.Rollback(); rerr != nil {
+			err = fmt.Errorf("%w: rolling back transaction: %v", err, rerr)
+		}
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("committing transaction: %w", err)
+	}
+
+	return nil
+}

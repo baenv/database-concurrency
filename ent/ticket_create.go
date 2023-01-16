@@ -47,6 +47,14 @@ func (tc *TicketCreate) SetVersions(s string) *TicketCreate {
 	return tc
 }
 
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (tc *TicketCreate) SetNillableVersions(s *string) *TicketCreate {
+	if s != nil {
+		tc.SetVersions(*s)
+	}
+	return tc
+}
+
 // SetLastEventID sets the "last_event_id" field.
 func (tc *TicketCreate) SetLastEventID(u uuid.UUID) *TicketCreate {
 	tc.mutation.SetLastEventID(u)
@@ -226,12 +234,6 @@ func (tc *TicketCreate) check() error {
 	}
 	if _, ok := tc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Ticket.user_id"`)}
-	}
-	if _, ok := tc.mutation.Metadata(); !ok {
-		return &ValidationError{Name: "metadata", err: errors.New(`ent: missing required field "Ticket.metadata"`)}
-	}
-	if _, ok := tc.mutation.Versions(); !ok {
-		return &ValidationError{Name: "versions", err: errors.New(`ent: missing required field "Ticket.versions"`)}
 	}
 	if _, ok := tc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Ticket.created_at"`)}

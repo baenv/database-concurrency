@@ -55,9 +55,29 @@ func (teu *TicketEventUpdate) SetMetadada(m map[string]interface{}) *TicketEvent
 	return teu
 }
 
+// ClearMetadada clears the value of the "metadada" field.
+func (teu *TicketEventUpdate) ClearMetadada() *TicketEventUpdate {
+	teu.mutation.ClearMetadada()
+	return teu
+}
+
 // SetVersions sets the "versions" field.
 func (teu *TicketEventUpdate) SetVersions(s string) *TicketEventUpdate {
 	teu.mutation.SetVersions(s)
+	return teu
+}
+
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (teu *TicketEventUpdate) SetNillableVersions(s *string) *TicketEventUpdate {
+	if s != nil {
+		teu.SetVersions(*s)
+	}
+	return teu
+}
+
+// ClearVersions clears the value of the "versions" field.
+func (teu *TicketEventUpdate) ClearVersions() *TicketEventUpdate {
+	teu.mutation.ClearVersions()
 	return teu
 }
 
@@ -212,8 +232,14 @@ func (teu *TicketEventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := teu.mutation.Metadada(); ok {
 		_spec.SetField(ticketevent.FieldMetadada, field.TypeJSON, value)
 	}
+	if teu.mutation.MetadadaCleared() {
+		_spec.ClearField(ticketevent.FieldMetadada, field.TypeJSON)
+	}
 	if value, ok := teu.mutation.Versions(); ok {
 		_spec.SetField(ticketevent.FieldVersions, field.TypeString, value)
+	}
+	if teu.mutation.VersionsCleared() {
+		_spec.ClearField(ticketevent.FieldVersions, field.TypeString)
 	}
 	if value, ok := teu.mutation.CreatedAt(); ok {
 		_spec.SetField(ticketevent.FieldCreatedAt, field.TypeTime, value)
@@ -334,9 +360,29 @@ func (teuo *TicketEventUpdateOne) SetMetadada(m map[string]interface{}) *TicketE
 	return teuo
 }
 
+// ClearMetadada clears the value of the "metadada" field.
+func (teuo *TicketEventUpdateOne) ClearMetadada() *TicketEventUpdateOne {
+	teuo.mutation.ClearMetadada()
+	return teuo
+}
+
 // SetVersions sets the "versions" field.
 func (teuo *TicketEventUpdateOne) SetVersions(s string) *TicketEventUpdateOne {
 	teuo.mutation.SetVersions(s)
+	return teuo
+}
+
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (teuo *TicketEventUpdateOne) SetNillableVersions(s *string) *TicketEventUpdateOne {
+	if s != nil {
+		teuo.SetVersions(*s)
+	}
+	return teuo
+}
+
+// ClearVersions clears the value of the "versions" field.
+func (teuo *TicketEventUpdateOne) ClearVersions() *TicketEventUpdateOne {
+	teuo.mutation.ClearVersions()
 	return teuo
 }
 
@@ -521,8 +567,14 @@ func (teuo *TicketEventUpdateOne) sqlSave(ctx context.Context) (_node *TicketEve
 	if value, ok := teuo.mutation.Metadada(); ok {
 		_spec.SetField(ticketevent.FieldMetadada, field.TypeJSON, value)
 	}
+	if teuo.mutation.MetadadaCleared() {
+		_spec.ClearField(ticketevent.FieldMetadada, field.TypeJSON)
+	}
 	if value, ok := teuo.mutation.Versions(); ok {
 		_spec.SetField(ticketevent.FieldVersions, field.TypeString, value)
+	}
+	if teuo.mutation.VersionsCleared() {
+		_spec.ClearField(ticketevent.FieldVersions, field.TypeString)
 	}
 	if value, ok := teuo.mutation.CreatedAt(); ok {
 		_spec.SetField(ticketevent.FieldCreatedAt, field.TypeTime, value)

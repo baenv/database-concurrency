@@ -10,6 +10,8 @@ import (
 
 type Handler interface {
 	Transaction(ctx echo.Context) error
+
+	Book(ctx echo.Context) error
 }
 
 // New is used to create new controller

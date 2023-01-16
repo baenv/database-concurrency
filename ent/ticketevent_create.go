@@ -53,6 +53,14 @@ func (tec *TicketEventCreate) SetVersions(s string) *TicketEventCreate {
 	return tec
 }
 
+// SetNillableVersions sets the "versions" field if the given value is not nil.
+func (tec *TicketEventCreate) SetNillableVersions(s *string) *TicketEventCreate {
+	if s != nil {
+		tec.SetVersions(*s)
+	}
+	return tec
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (tec *TicketEventCreate) SetCreatedAt(t time.Time) *TicketEventCreate {
 	tec.mutation.SetCreatedAt(t)
@@ -206,12 +214,6 @@ func (tec *TicketEventCreate) check() error {
 	}
 	if _, ok := tec.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "TicketEvent.type"`)}
-	}
-	if _, ok := tec.mutation.Metadada(); !ok {
-		return &ValidationError{Name: "metadada", err: errors.New(`ent: missing required field "TicketEvent.metadada"`)}
-	}
-	if _, ok := tec.mutation.Versions(); !ok {
-		return &ValidationError{Name: "versions", err: errors.New(`ent: missing required field "TicketEvent.versions"`)}
 	}
 	if _, ok := tec.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "TicketEvent.created_at"`)}

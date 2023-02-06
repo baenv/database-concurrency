@@ -20,5 +20,6 @@ func (pg pg) Update(ctx context.Context, ticket *ent.Ticket) (*ent.Ticket, error
 	return pg.client.UpdateOne(ticket).
 		SetLastEventID(ticket.LastEventID).
 		SetStatus(ticket.Status).
+		SetVersions(ticket.Versions).
 		Save(ctx)
 }

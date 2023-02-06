@@ -50,6 +50,7 @@ func main() {
 
 	ticketRouter := apiV1.Group("/tickets")
 	ticketRouter.Add(http.MethodPost, "/book", hdl.Book)
+	ticketRouter.Add(http.MethodPost, "/reserve", hdl.Reserve)
 
 	if err := e.Start(fmt.Sprintf(":%s", cfg.SERVER_PORT)); err != nil {
 		log.WithError(err).Error("failed to start server")

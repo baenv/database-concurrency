@@ -11,6 +11,8 @@ import (
 
 type Controller interface {
 	Book(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ticket, error)
+	// Reserve the ticket
+	Reserve(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ticket, error)
 }
 
 func New(repo repository.Repositoy, log *logrus.Logger) Controller {

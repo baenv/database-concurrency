@@ -14,6 +14,8 @@ type Handler interface {
 	Book(ctx echo.Context) error
 	// Reserve reserve a ticket
 	Reserve(ctx echo.Context) error
+	// Cancel cancel a ticket
+	Cancel(ctx echo.Context) error
 }
 
 // New is used to create new controller

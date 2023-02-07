@@ -169,3 +169,75 @@ func (t ticket) Reserve(ctx context.Context, ticketID, userID uuid.UUID) (*ent.T
 	}
 	return &result, nil
 }
+
+// Cancel the ticket
+func (t ticket) Cancel(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ticket, error) {
+	var result ent.Ticket
+	ticket, err := t.repo.Ticket().One(ctx, ticketID)
+
+	if err != nil {
+		t.log.Error("failed to get ticket", err)
+		return nil, err
+	}
+
+	if ticket.UserID.String() != userID.String() {
+		t.log.Error("ticket is not owned by given user")
+		return nil, errors.New("ticket is not owned by given user")
+	}
+
+	if ticket.Status != transducer.Reserved.String() {
+		t.log.Error("ticket is not reserved")
+		return nil, errors.New("ticket is not reserved")
+	}
+
+	config, ticketTransducer := transducer.NewBookingMachine(ticket.Status)
+	output := ticketTransducer.Transduce(config, transducer.Cancel)
+
+	resultState := output.GetState().String()
+	if resultState == transducer.Invalid.String() {
+		err := errors.New("invalid ticket state")
+		t.log.Error("failed to get ticket", err)
+		return nil, err
+	}
+
+	for _, effect := range output.Effects {
+		switch effect.Int() {
+		case transducer.UpdateBookingStatus.Int():
+			if err := repository.WithTx(ctx, t.repo.Pg(), func(txRepo repository.Repositoy) error {
+				ticketEvent, err := txRepo.TicketEvent().Create(ctx, &ent.TicketEvent{
+					TicketID: ticketID,
+					UserID:   userID,
+					Type:     transducer.Cancel.String(),
+				})
+				if err != nil {
+					t.log.Error("failed to create ticket event", err)
+					return err
+				}
+
+				// ticket update
+				ticket.Status = resultState
+				ticket.LastEventID = ticketEvent.ID
+				version, err := strconv.ParseInt(ticket.Versions, 16, 0)
+				if err != nil {
+					return err
+				}
+
+				ticket.Versions = strconv.FormatInt(version+1, 16)
+				ticket, err = txRepo.Ticket().Update(ctx, ticket)
+				if err != nil {
+					t.log.Error("failed to update ticket", err)
+					return err
+				}
+
+				ticket.Edges.LastEvent = ticketEvent
+				result = *ticket
+				return nil
+			}); err != nil {
+				return nil, err
+			}
+		case transducer.EmailUser.Int():
+			// TODO: email user
+		}
+	}
+	return &result, nil
+}

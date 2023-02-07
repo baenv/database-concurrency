@@ -29,6 +29,7 @@ const (
 	EmailClient
 	CallClient
 	SMSUser
+	CreateBookingEvent
 )
 
 // Names

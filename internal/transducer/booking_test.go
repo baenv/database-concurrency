@@ -3,6 +3,7 @@ package transducer
 import (
 	"database-concurrency/internal/transducer/graph"
 	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -16,6 +17,15 @@ func TestRehearseBookingTransducer(t *testing.T) {
 
 	digraph := bookingTransducer.ToDiGraph()
 	t.Logf("Digraph: %v\n", digraph)
+
+	nextState, nextEffects := bookingTransducer.Rehearse(Idle, []Input{Book})
+	if nextState != Booked {
+		t.Errorf("characterTransducer.Rehearse() failed, expected %v, got %v", Booked, nextState)
+	}
+	targetEffects := []Effect{CreateBookingEvent, UpdateBookingStatus, EmailUser, CallClient, SMSUser}
+	if !reflect.DeepEqual(nextEffects, targetEffects) {
+		t.Errorf("characterTransducer.Rehearse() failed, expected %v, got %v", targetEffects, nextEffects)
+	}
 }
 
 func TestBookingShortestPaths(t *testing.T) {

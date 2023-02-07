@@ -10,6 +10,7 @@ func NewBookingTransducer(setupConfig *Config, childTransducers ...Transducer) *
 
 		{Reserved, Book}: func() *Outputs {
 			return CreateOutputs().SetState(Booked).
+				AddEffect(CreateBookingEvent).
 				AddEffect(UpdateBookingStatus).
 				AddEffect(EmailUser).
 				AddEffect(CallClient).

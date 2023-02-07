@@ -41,27 +41,60 @@ func (t ticket) Book(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Tick
 			return errors.New("ticket is not owned by given user")
 		}
 
-		if ticket.Status != "reserved" {
+		if ticket.Status != transducer.Reserved.String() {
 			t.log.Error("ticket is not reserved")
 			return errors.New("ticket is not reserved")
 		}
 
-		ticketEvent, err := txRepo.TicketEvent().Create(ctx, &ent.TicketEvent{
-			TicketID: ticketID,
-			UserID:   userID,
-			Type:     "book",
-		})
-		if err != nil {
-			t.log.Error("failed to create ticket event", err)
-			return err
+		config, machine := transducer.NewBookingMachine(ticket.Status)
+		outputs := machine.Transduce(config, transducer.Book)
+
+		state := outputs.GetState()
+		if state == transducer.Invalid {
+			t.log.Error("machine has reached an invalid state")
+			return errors.New("machine has reached an invalid state")
+		}
+		if state != transducer.Booked {
+			t.log.Error("machine has failed to transition to booked")
+			return errors.New("machine has failed to transition to booked")
 		}
 
-		ticket.Status = "booked"
-		ticket.LastEventID = ticketEvent.ID
-		ticket, err = txRepo.Ticket().Update(ctx, ticket)
-		if err != nil {
-			t.log.Error("failed to update ticket", err)
-			return err
+		var ticketEvent *ent.TicketEvent
+		for _, effect := range outputs.Effects {
+			switch effect {
+			case transducer.CreateBookingEvent:
+				ticketEvent, err = txRepo.TicketEvent().Create(ctx, &ent.TicketEvent{
+					TicketID: ticketID,
+					UserID:   userID,
+					Type:     transducer.Book.String(),
+				})
+				if err != nil {
+					t.log.Error("failed to create ticket event", err)
+					return err
+				}
+
+			case transducer.UpdateBookingStatus:
+				ticket.Status = state.String()
+				ticket.LastEventID = ticketEvent.ID
+				ticket, err = txRepo.Ticket().Update(ctx, ticket)
+				if err != nil {
+					t.log.Error("failed to update ticket", err)
+					return err
+				}
+
+			case transducer.EmailUser:
+				// TODO: create mock for email user
+
+			case transducer.CallClient:
+				// TODO: create mock for call client
+
+			case transducer.SMSUser:
+				// TODO: create mock for SMS user
+
+			default:
+				t.log.Error("not all effects have been covered")
+				return errors.New("not all effects have been covered")
+			}
 		}
 
 		ticket.Edges.LastEvent = ticketEvent

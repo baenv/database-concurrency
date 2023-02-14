@@ -23,3 +23,10 @@ type ReserveRequest struct {
 type ReserveResponse struct {
 	Ticket *ent.Ticket `json:"ticket"`
 }
+type CancelRequest struct {
+	TicketID uuid.UUID `json:"ticket_id"`
+	UserID   uuid.UUID `json:"user_id"` // Mock, actually, it is fetched from JWT
+}
+type CancelResponse struct {
+	Ticket *ent.Ticket `json:"ticket"`
+}

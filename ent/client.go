@@ -10,6 +10,7 @@ import (
 
 	"database-concurrency/ent/migrate"
 
+	"database-concurrency/ent/createticketlog"
 	"database-concurrency/ent/serviceprodiver"
 	"database-concurrency/ent/ticket"
 	"database-concurrency/ent/ticketevent"
@@ -27,6 +28,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// CreateTicketLog is the client for interacting with the CreateTicketLog builders.
+	CreateTicketLog *CreateTicketLogClient
 	// ServiceProdiver is the client for interacting with the ServiceProdiver builders.
 	ServiceProdiver *ServiceProdiverClient
 	// Ticket is the client for interacting with the Ticket builders.
@@ -50,6 +53,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.CreateTicketLog = NewCreateTicketLogClient(c.config)
 	c.ServiceProdiver = NewServiceProdiverClient(c.config)
 	c.Ticket = NewTicketClient(c.config)
 	c.TicketEvent = NewTicketEventClient(c.config)
@@ -88,6 +92,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:             ctx,
 		config:          cfg,
+		CreateTicketLog: NewCreateTicketLogClient(cfg),
 		ServiceProdiver: NewServiceProdiverClient(cfg),
 		Ticket:          NewTicketClient(cfg),
 		TicketEvent:     NewTicketEventClient(cfg),
@@ -112,6 +117,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:             ctx,
 		config:          cfg,
+		CreateTicketLog: NewCreateTicketLogClient(cfg),
 		ServiceProdiver: NewServiceProdiverClient(cfg),
 		Ticket:          NewTicketClient(cfg),
 		TicketEvent:     NewTicketEventClient(cfg),
@@ -123,7 +129,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		ServiceProdiver.
+//		CreateTicketLog.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -145,11 +151,102 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.CreateTicketLog.Use(hooks...)
 	c.ServiceProdiver.Use(hooks...)
 	c.Ticket.Use(hooks...)
 	c.TicketEvent.Use(hooks...)
 	c.Transaction.Use(hooks...)
 	c.User.Use(hooks...)
+}
+
+// CreateTicketLogClient is a client for the CreateTicketLog schema.
+type CreateTicketLogClient struct {
+	config
+}
+
+// NewCreateTicketLogClient returns a client for the CreateTicketLog from the given config.
+func NewCreateTicketLogClient(c config) *CreateTicketLogClient {
+	return &CreateTicketLogClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `createticketlog.Hooks(f(g(h())))`.
+func (c *CreateTicketLogClient) Use(hooks ...Hook) {
+	c.hooks.CreateTicketLog = append(c.hooks.CreateTicketLog, hooks...)
+}
+
+// Create returns a builder for creating a CreateTicketLog entity.
+func (c *CreateTicketLogClient) Create() *CreateTicketLogCreate {
+	mutation := newCreateTicketLogMutation(c.config, OpCreate)
+	return &CreateTicketLogCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CreateTicketLog entities.
+func (c *CreateTicketLogClient) CreateBulk(builders ...*CreateTicketLogCreate) *CreateTicketLogCreateBulk {
+	return &CreateTicketLogCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CreateTicketLog.
+func (c *CreateTicketLogClient) Update() *CreateTicketLogUpdate {
+	mutation := newCreateTicketLogMutation(c.config, OpUpdate)
+	return &CreateTicketLogUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CreateTicketLogClient) UpdateOne(ctl *CreateTicketLog) *CreateTicketLogUpdateOne {
+	mutation := newCreateTicketLogMutation(c.config, OpUpdateOne, withCreateTicketLog(ctl))
+	return &CreateTicketLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CreateTicketLogClient) UpdateOneID(id int) *CreateTicketLogUpdateOne {
+	mutation := newCreateTicketLogMutation(c.config, OpUpdateOne, withCreateTicketLogID(id))
+	return &CreateTicketLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CreateTicketLog.
+func (c *CreateTicketLogClient) Delete() *CreateTicketLogDelete {
+	mutation := newCreateTicketLogMutation(c.config, OpDelete)
+	return &CreateTicketLogDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CreateTicketLogClient) DeleteOne(ctl *CreateTicketLog) *CreateTicketLogDeleteOne {
+	return c.DeleteOneID(ctl.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CreateTicketLogClient) DeleteOneID(id int) *CreateTicketLogDeleteOne {
+	builder := c.Delete().Where(createticketlog.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CreateTicketLogDeleteOne{builder}
+}
+
+// Query returns a query builder for CreateTicketLog.
+func (c *CreateTicketLogClient) Query() *CreateTicketLogQuery {
+	return &CreateTicketLogQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a CreateTicketLog entity by its id.
+func (c *CreateTicketLogClient) Get(ctx context.Context, id int) (*CreateTicketLog, error) {
+	return c.Query().Where(createticketlog.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CreateTicketLogClient) GetX(ctx context.Context, id int) *CreateTicketLog {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CreateTicketLogClient) Hooks() []Hook {
+	return c.hooks.CreateTicketLog
 }
 
 // ServiceProdiverClient is a client for the ServiceProdiver schema.

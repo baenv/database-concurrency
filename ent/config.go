@@ -24,6 +24,7 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
+	CreateTicketLog []ent.Hook
 	ServiceProdiver []ent.Hook
 	Ticket          []ent.Hook
 	TicketEvent     []ent.Hook

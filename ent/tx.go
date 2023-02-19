@@ -12,6 +12,8 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// CreateTicketLog is the client for interacting with the CreateTicketLog builders.
+	CreateTicketLog *CreateTicketLogClient
 	// ServiceProdiver is the client for interacting with the ServiceProdiver builders.
 	ServiceProdiver *ServiceProdiverClient
 	// Ticket is the client for interacting with the Ticket builders.
@@ -153,6 +155,7 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.CreateTicketLog = NewCreateTicketLogClient(tx.config)
 	tx.ServiceProdiver = NewServiceProdiverClient(tx.config)
 	tx.Ticket = NewTicketClient(tx.config)
 	tx.TicketEvent = NewTicketEventClient(tx.config)
@@ -167,7 +170,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: ServiceProdiver.QueryXXX(), the query will be executed
+// applies a query, for example: CreateTicketLog.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

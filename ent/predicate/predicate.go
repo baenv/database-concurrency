@@ -6,6 +6,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// CreateTicketLog is the predicate function for createticketlog builders.
+type CreateTicketLog func(*sql.Selector)
+
 // ServiceProdiver is the predicate function for serviceprodiver builders.
 type ServiceProdiver func(*sql.Selector)
 

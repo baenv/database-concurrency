@@ -8,6 +8,19 @@ import (
 	"fmt"
 )
 
+// The CreateTicketLogFunc type is an adapter to allow the use of ordinary
+// function as CreateTicketLog mutator.
+type CreateTicketLogFunc func(context.Context, *ent.CreateTicketLogMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CreateTicketLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.CreateTicketLogMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CreateTicketLogMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The ServiceProdiverFunc type is an adapter to allow the use of ordinary
 // function as ServiceProdiver mutator.
 type ServiceProdiverFunc func(context.Context, *ent.ServiceProdiverMutation) (ent.Value, error)

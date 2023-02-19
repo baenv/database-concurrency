@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"database-concurrency/ent/createticketlog"
 	"database-concurrency/ent/schema"
 	"database-concurrency/ent/serviceprodiver"
 	"database-concurrency/ent/ticket"
@@ -18,6 +19,22 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	createticketlogFields := schema.CreateTicketLog{}.Fields()
+	_ = createticketlogFields
+	// createticketlogDescTicketID is the schema descriptor for ticket_id field.
+	createticketlogDescTicketID := createticketlogFields[0].Descriptor()
+	// createticketlog.DefaultTicketID holds the default value on creation for the ticket_id field.
+	createticketlog.DefaultTicketID = createticketlogDescTicketID.Default.(func() uuid.UUID)
+	// createticketlogDescCreatedAt is the schema descriptor for created_at field.
+	createticketlogDescCreatedAt := createticketlogFields[2].Descriptor()
+	// createticketlog.DefaultCreatedAt holds the default value on creation for the created_at field.
+	createticketlog.DefaultCreatedAt = createticketlogDescCreatedAt.Default.(func() time.Time)
+	// createticketlogDescUpdatedAt is the schema descriptor for updated_at field.
+	createticketlogDescUpdatedAt := createticketlogFields[3].Descriptor()
+	// createticketlog.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	createticketlog.DefaultUpdatedAt = createticketlogDescUpdatedAt.Default.(func() time.Time)
+	// createticketlog.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	createticketlog.UpdateDefaultUpdatedAt = createticketlogDescUpdatedAt.UpdateDefault.(func() time.Time)
 	serviceprodiverFields := schema.ServiceProdiver{}.Fields()
 	_ = serviceprodiverFields
 	// serviceprodiverDescCreatedAt is the schema descriptor for created_at field.

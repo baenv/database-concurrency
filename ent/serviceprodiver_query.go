@@ -262,7 +262,6 @@ func (spq *ServiceProdiverQuery) Clone() *ServiceProdiverQuery {
 //		GroupBy(serviceprodiver.FieldName).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (spq *ServiceProdiverQuery) GroupBy(field string, fields ...string) *ServiceProdiverGroupBy {
 	grbuild := &ServiceProdiverGroupBy{config: spq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -289,7 +288,6 @@ func (spq *ServiceProdiverQuery) GroupBy(field string, fields ...string) *Servic
 //	client.ServiceProdiver.Query().
 //		Select(serviceprodiver.FieldName).
 //		Scan(ctx, &v)
-//
 func (spq *ServiceProdiverQuery) Select(fields ...string) *ServiceProdiverSelect {
 	spq.fields = append(spq.fields, fields...)
 	selbuild := &ServiceProdiverSelect{ServiceProdiverQuery: spq}

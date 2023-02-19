@@ -26,8 +26,8 @@ type TicketEvent struct {
 	UserID uuid.UUID `json:"user_id,omitempty"`
 	// Type holds the value of the "type" field.
 	Type string `json:"type,omitempty"`
-	// Metadada holds the value of the "metadada" field.
-	Metadada map[string]interface{} `json:"metadada,omitempty"`
+	// Metadata holds the value of the "metadata" field.
+	Metadata map[string]interface{} `json:"metadata,omitempty"`
 	// Versions holds the value of the "versions" field.
 	Versions string `json:"versions,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -81,7 +81,7 @@ func (*TicketEvent) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case ticketevent.FieldMetadada:
+		case ticketevent.FieldMetadata:
 			values[i] = new([]byte)
 		case ticketevent.FieldType, ticketevent.FieldVersions:
 			values[i] = new(sql.NullString)
@@ -128,12 +128,12 @@ func (te *TicketEvent) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				te.Type = value.String
 			}
-		case ticketevent.FieldMetadada:
+		case ticketevent.FieldMetadata:
 			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field metadada", values[i])
+				return fmt.Errorf("unexpected type %T for field metadata", values[i])
 			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &te.Metadada); err != nil {
-					return fmt.Errorf("unmarshal field metadada: %w", err)
+				if err := json.Unmarshal(*value, &te.Metadata); err != nil {
+					return fmt.Errorf("unmarshal field metadata: %w", err)
 				}
 			}
 		case ticketevent.FieldVersions:
@@ -201,8 +201,8 @@ func (te *TicketEvent) String() string {
 	builder.WriteString("type=")
 	builder.WriteString(te.Type)
 	builder.WriteString(", ")
-	builder.WriteString("metadada=")
-	builder.WriteString(fmt.Sprintf("%v", te.Metadada))
+	builder.WriteString("metadata=")
+	builder.WriteString(fmt.Sprintf("%v", te.Metadata))
 	builder.WriteString(", ")
 	builder.WriteString("versions=")
 	builder.WriteString(te.Versions)

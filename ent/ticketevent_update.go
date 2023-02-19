@@ -49,15 +49,15 @@ func (teu *TicketEventUpdate) SetType(s string) *TicketEventUpdate {
 	return teu
 }
 
-// SetMetadada sets the "metadada" field.
-func (teu *TicketEventUpdate) SetMetadada(m map[string]interface{}) *TicketEventUpdate {
-	teu.mutation.SetMetadada(m)
+// SetMetadata sets the "metadata" field.
+func (teu *TicketEventUpdate) SetMetadata(m map[string]interface{}) *TicketEventUpdate {
+	teu.mutation.SetMetadata(m)
 	return teu
 }
 
-// ClearMetadada clears the value of the "metadada" field.
-func (teu *TicketEventUpdate) ClearMetadada() *TicketEventUpdate {
-	teu.mutation.ClearMetadada()
+// ClearMetadata clears the value of the "metadata" field.
+func (teu *TicketEventUpdate) ClearMetadata() *TicketEventUpdate {
+	teu.mutation.ClearMetadata()
 	return teu
 }
 
@@ -229,11 +229,11 @@ func (teu *TicketEventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := teu.mutation.GetType(); ok {
 		_spec.SetField(ticketevent.FieldType, field.TypeString, value)
 	}
-	if value, ok := teu.mutation.Metadada(); ok {
-		_spec.SetField(ticketevent.FieldMetadada, field.TypeJSON, value)
+	if value, ok := teu.mutation.Metadata(); ok {
+		_spec.SetField(ticketevent.FieldMetadata, field.TypeJSON, value)
 	}
-	if teu.mutation.MetadadaCleared() {
-		_spec.ClearField(ticketevent.FieldMetadada, field.TypeJSON)
+	if teu.mutation.MetadataCleared() {
+		_spec.ClearField(ticketevent.FieldMetadata, field.TypeJSON)
 	}
 	if value, ok := teu.mutation.Versions(); ok {
 		_spec.SetField(ticketevent.FieldVersions, field.TypeString, value)
@@ -354,15 +354,15 @@ func (teuo *TicketEventUpdateOne) SetType(s string) *TicketEventUpdateOne {
 	return teuo
 }
 
-// SetMetadada sets the "metadada" field.
-func (teuo *TicketEventUpdateOne) SetMetadada(m map[string]interface{}) *TicketEventUpdateOne {
-	teuo.mutation.SetMetadada(m)
+// SetMetadata sets the "metadata" field.
+func (teuo *TicketEventUpdateOne) SetMetadata(m map[string]interface{}) *TicketEventUpdateOne {
+	teuo.mutation.SetMetadata(m)
 	return teuo
 }
 
-// ClearMetadada clears the value of the "metadada" field.
-func (teuo *TicketEventUpdateOne) ClearMetadada() *TicketEventUpdateOne {
-	teuo.mutation.ClearMetadada()
+// ClearMetadata clears the value of the "metadata" field.
+func (teuo *TicketEventUpdateOne) ClearMetadata() *TicketEventUpdateOne {
+	teuo.mutation.ClearMetadata()
 	return teuo
 }
 
@@ -564,11 +564,11 @@ func (teuo *TicketEventUpdateOne) sqlSave(ctx context.Context) (_node *TicketEve
 	if value, ok := teuo.mutation.GetType(); ok {
 		_spec.SetField(ticketevent.FieldType, field.TypeString, value)
 	}
-	if value, ok := teuo.mutation.Metadada(); ok {
-		_spec.SetField(ticketevent.FieldMetadada, field.TypeJSON, value)
+	if value, ok := teuo.mutation.Metadata(); ok {
+		_spec.SetField(ticketevent.FieldMetadata, field.TypeJSON, value)
 	}
-	if teuo.mutation.MetadadaCleared() {
-		_spec.ClearField(ticketevent.FieldMetadada, field.TypeJSON)
+	if teuo.mutation.MetadataCleared() {
+		_spec.ClearField(ticketevent.FieldMetadata, field.TypeJSON)
 	}
 	if value, ok := teuo.mutation.Versions(); ok {
 		_spec.SetField(ticketevent.FieldVersions, field.TypeString, value)

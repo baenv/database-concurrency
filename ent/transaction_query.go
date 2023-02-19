@@ -262,7 +262,6 @@ func (tq *TransactionQuery) Clone() *TransactionQuery {
 //		GroupBy(transaction.FieldHash).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (tq *TransactionQuery) GroupBy(field string, fields ...string) *TransactionGroupBy {
 	grbuild := &TransactionGroupBy{config: tq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -289,7 +288,6 @@ func (tq *TransactionQuery) GroupBy(field string, fields ...string) *Transaction
 //	client.Transaction.Query().
 //		Select(transaction.FieldHash).
 //		Scan(ctx, &v)
-//
 func (tq *TransactionQuery) Select(fields ...string) *TransactionSelect {
 	tq.fields = append(tq.fields, fields...)
 	selbuild := &TransactionSelect{TransactionQuery: tq}

@@ -6,6 +6,7 @@ import (
 	"database-concurrency/internal/repository"
 	"database-concurrency/internal/transducer"
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/google/uuid"
@@ -60,6 +61,9 @@ func (t ticket) Book(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Tick
 		}
 
 		var ticketEvent *ent.TicketEvent
+
+		fmt.Println(outputs.Effects)
+
 		for _, effect := range outputs.Effects {
 			switch effect {
 			case transducer.CreateBookingEvent:
@@ -84,12 +88,15 @@ func (t ticket) Book(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Tick
 
 			case transducer.EmailUser:
 				// TODO: create mock for email user
+				t.log.Info("email user")
 
 			case transducer.CallClient:
 				// TODO: create mock for call client
+				t.log.Info("call client")
 
 			case transducer.SMSUser:
 				// TODO: create mock for SMS user
+				t.log.Info("SMS user")
 
 			default:
 				t.log.Error("not all effects have been covered")

@@ -370,7 +370,6 @@ func (tq *TicketQuery) WithTicketEvents(opts ...func(*TicketEventQuery)) *Ticket
 //		GroupBy(ticket.FieldStatus).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (tq *TicketQuery) GroupBy(field string, fields ...string) *TicketGroupBy {
 	grbuild := &TicketGroupBy{config: tq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -397,7 +396,6 @@ func (tq *TicketQuery) GroupBy(field string, fields ...string) *TicketGroupBy {
 //	client.Ticket.Query().
 //		Select(ticket.FieldStatus).
 //		Scan(ctx, &v)
-//
 func (tq *TicketQuery) Select(fields ...string) *TicketSelect {
 	tq.fields = append(tq.fields, fields...)
 	selbuild := &TicketSelect{TicketQuery: tq}

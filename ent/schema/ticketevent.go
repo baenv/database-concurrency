@@ -21,7 +21,7 @@ func (TicketEvent) Fields() []ent.Field {
 		field.UUID("ticket_id", uuid.UUID{}),
 		field.UUID("user_id", uuid.UUID{}),
 		field.String("type"),
-		field.JSON("metadada", map[string]interface{}{}).Optional(),
+		field.JSON("metadata", map[string]interface{}{}).Optional(),
 		field.String("versions").Optional(),
 		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),

@@ -1514,7 +1514,7 @@ type TicketEventMutation struct {
 	typ           string
 	id            *uuid.UUID
 	_type         *string
-	metadada      *map[string]interface{}
+	metadata      *map[string]interface{}
 	versions      *string
 	created_at    *time.Time
 	updated_at    *time.Time
@@ -1740,53 +1740,53 @@ func (m *TicketEventMutation) ResetType() {
 	m._type = nil
 }
 
-// SetMetadada sets the "metadada" field.
-func (m *TicketEventMutation) SetMetadada(value map[string]interface{}) {
-	m.metadada = &value
+// SetMetadata sets the "metadata" field.
+func (m *TicketEventMutation) SetMetadata(value map[string]interface{}) {
+	m.metadata = &value
 }
 
-// Metadada returns the value of the "metadada" field in the mutation.
-func (m *TicketEventMutation) Metadada() (r map[string]interface{}, exists bool) {
-	v := m.metadada
+// Metadata returns the value of the "metadata" field in the mutation.
+func (m *TicketEventMutation) Metadata() (r map[string]interface{}, exists bool) {
+	v := m.metadata
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldMetadada returns the old "metadada" field's value of the TicketEvent entity.
+// OldMetadata returns the old "metadata" field's value of the TicketEvent entity.
 // If the TicketEvent object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TicketEventMutation) OldMetadada(ctx context.Context) (v map[string]interface{}, err error) {
+func (m *TicketEventMutation) OldMetadata(ctx context.Context) (v map[string]interface{}, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMetadada is only allowed on UpdateOne operations")
+		return v, errors.New("OldMetadata is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMetadada requires an ID field in the mutation")
+		return v, errors.New("OldMetadata requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMetadada: %w", err)
+		return v, fmt.Errorf("querying old value for OldMetadata: %w", err)
 	}
-	return oldValue.Metadada, nil
+	return oldValue.Metadata, nil
 }
 
-// ClearMetadada clears the value of the "metadada" field.
-func (m *TicketEventMutation) ClearMetadada() {
-	m.metadada = nil
-	m.clearedFields[ticketevent.FieldMetadada] = struct{}{}
+// ClearMetadata clears the value of the "metadata" field.
+func (m *TicketEventMutation) ClearMetadata() {
+	m.metadata = nil
+	m.clearedFields[ticketevent.FieldMetadata] = struct{}{}
 }
 
-// MetadadaCleared returns if the "metadada" field was cleared in this mutation.
-func (m *TicketEventMutation) MetadadaCleared() bool {
-	_, ok := m.clearedFields[ticketevent.FieldMetadada]
+// MetadataCleared returns if the "metadata" field was cleared in this mutation.
+func (m *TicketEventMutation) MetadataCleared() bool {
+	_, ok := m.clearedFields[ticketevent.FieldMetadata]
 	return ok
 }
 
-// ResetMetadada resets all changes to the "metadada" field.
-func (m *TicketEventMutation) ResetMetadada() {
-	m.metadada = nil
-	delete(m.clearedFields, ticketevent.FieldMetadada)
+// ResetMetadata resets all changes to the "metadata" field.
+func (m *TicketEventMutation) ResetMetadata() {
+	m.metadata = nil
+	delete(m.clearedFields, ticketevent.FieldMetadata)
 }
 
 // SetVersions sets the "versions" field.
@@ -1991,8 +1991,8 @@ func (m *TicketEventMutation) Fields() []string {
 	if m._type != nil {
 		fields = append(fields, ticketevent.FieldType)
 	}
-	if m.metadada != nil {
-		fields = append(fields, ticketevent.FieldMetadada)
+	if m.metadata != nil {
+		fields = append(fields, ticketevent.FieldMetadata)
 	}
 	if m.versions != nil {
 		fields = append(fields, ticketevent.FieldVersions)
@@ -2017,8 +2017,8 @@ func (m *TicketEventMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case ticketevent.FieldType:
 		return m.GetType()
-	case ticketevent.FieldMetadada:
-		return m.Metadada()
+	case ticketevent.FieldMetadata:
+		return m.Metadata()
 	case ticketevent.FieldVersions:
 		return m.Versions()
 	case ticketevent.FieldCreatedAt:
@@ -2040,8 +2040,8 @@ func (m *TicketEventMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldUserID(ctx)
 	case ticketevent.FieldType:
 		return m.OldType(ctx)
-	case ticketevent.FieldMetadada:
-		return m.OldMetadada(ctx)
+	case ticketevent.FieldMetadata:
+		return m.OldMetadata(ctx)
 	case ticketevent.FieldVersions:
 		return m.OldVersions(ctx)
 	case ticketevent.FieldCreatedAt:
@@ -2078,12 +2078,12 @@ func (m *TicketEventMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetType(v)
 		return nil
-	case ticketevent.FieldMetadada:
+	case ticketevent.FieldMetadata:
 		v, ok := value.(map[string]interface{})
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetMetadada(v)
+		m.SetMetadata(v)
 		return nil
 	case ticketevent.FieldVersions:
 		v, ok := value.(string)
@@ -2136,8 +2136,8 @@ func (m *TicketEventMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *TicketEventMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(ticketevent.FieldMetadada) {
-		fields = append(fields, ticketevent.FieldMetadada)
+	if m.FieldCleared(ticketevent.FieldMetadata) {
+		fields = append(fields, ticketevent.FieldMetadata)
 	}
 	if m.FieldCleared(ticketevent.FieldVersions) {
 		fields = append(fields, ticketevent.FieldVersions)
@@ -2156,8 +2156,8 @@ func (m *TicketEventMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *TicketEventMutation) ClearField(name string) error {
 	switch name {
-	case ticketevent.FieldMetadada:
-		m.ClearMetadada()
+	case ticketevent.FieldMetadata:
+		m.ClearMetadata()
 		return nil
 	case ticketevent.FieldVersions:
 		m.ClearVersions()
@@ -2179,8 +2179,8 @@ func (m *TicketEventMutation) ResetField(name string) error {
 	case ticketevent.FieldType:
 		m.ResetType()
 		return nil
-	case ticketevent.FieldMetadada:
-		m.ResetMetadada()
+	case ticketevent.FieldMetadata:
+		m.ResetMetadata()
 		return nil
 	case ticketevent.FieldVersions:
 		m.ResetVersions()

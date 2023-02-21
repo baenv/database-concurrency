@@ -41,9 +41,9 @@ func (tec *TicketEventCreate) SetType(s string) *TicketEventCreate {
 	return tec
 }
 
-// SetMetadada sets the "metadada" field.
-func (tec *TicketEventCreate) SetMetadada(m map[string]interface{}) *TicketEventCreate {
-	tec.mutation.SetMetadada(m)
+// SetMetadata sets the "metadata" field.
+func (tec *TicketEventCreate) SetMetadata(m map[string]interface{}) *TicketEventCreate {
+	tec.mutation.SetMetadata(m)
 	return tec
 }
 
@@ -267,9 +267,9 @@ func (tec *TicketEventCreate) createSpec() (*TicketEvent, *sqlgraph.CreateSpec) 
 		_spec.SetField(ticketevent.FieldType, field.TypeString, value)
 		_node.Type = value
 	}
-	if value, ok := tec.mutation.Metadada(); ok {
-		_spec.SetField(ticketevent.FieldMetadada, field.TypeJSON, value)
-		_node.Metadada = value
+	if value, ok := tec.mutation.Metadata(); ok {
+		_spec.SetField(ticketevent.FieldMetadata, field.TypeJSON, value)
+		_node.Metadata = value
 	}
 	if value, ok := tec.mutation.Versions(); ok {
 		_spec.SetField(ticketevent.FieldVersions, field.TypeString, value)

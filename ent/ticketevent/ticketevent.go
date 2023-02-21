@@ -19,8 +19,8 @@ const (
 	FieldUserID = "user_id"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
-	// FieldMetadada holds the string denoting the metadada field in the database.
-	FieldMetadada = "metadada"
+	// FieldMetadata holds the string denoting the metadata field in the database.
+	FieldMetadata = "metadata"
 	// FieldVersions holds the string denoting the versions field in the database.
 	FieldVersions = "versions"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -55,7 +55,7 @@ var Columns = []string{
 	FieldTicketID,
 	FieldUserID,
 	FieldType,
-	FieldMetadada,
+	FieldMetadata,
 	FieldVersions,
 	FieldCreatedAt,
 	FieldUpdatedAt,

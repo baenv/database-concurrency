@@ -334,7 +334,6 @@ func (teq *TicketEventQuery) WithTicket(opts ...func(*TicketQuery)) *TicketEvent
 //		GroupBy(ticketevent.FieldTicketID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (teq *TicketEventQuery) GroupBy(field string, fields ...string) *TicketEventGroupBy {
 	grbuild := &TicketEventGroupBy{config: teq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -361,7 +360,6 @@ func (teq *TicketEventQuery) GroupBy(field string, fields ...string) *TicketEven
 //	client.TicketEvent.Query().
 //		Select(ticketevent.FieldTicketID).
 //		Scan(ctx, &v)
-//
 func (teq *TicketEventQuery) Select(fields ...string) *TicketEventSelect {
 	teq.fields = append(teq.fields, fields...)
 	selbuild := &TicketEventSelect{TicketEventQuery: teq}

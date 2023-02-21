@@ -295,17 +295,17 @@ func TypeContainsFold(v string) predicate.TicketEvent {
 	})
 }
 
-// MetadadaIsNil applies the IsNil predicate on the "metadada" field.
-func MetadadaIsNil() predicate.TicketEvent {
+// MetadataIsNil applies the IsNil predicate on the "metadata" field.
+func MetadataIsNil() predicate.TicketEvent {
 	return predicate.TicketEvent(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldMetadada)))
+		s.Where(sql.IsNull(s.C(FieldMetadata)))
 	})
 }
 
-// MetadadaNotNil applies the NotNil predicate on the "metadada" field.
-func MetadadaNotNil() predicate.TicketEvent {
+// MetadataNotNil applies the NotNil predicate on the "metadata" field.
+func MetadataNotNil() predicate.TicketEvent {
 	return predicate.TicketEvent(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldMetadada)))
+		s.Where(sql.NotNull(s.C(FieldMetadata)))
 	})
 }
 

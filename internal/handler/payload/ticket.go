@@ -2,13 +2,15 @@ package payload
 
 import (
 	"database-concurrency/ent"
+	"database-concurrency/internal/controller/utils"
 
 	"github.com/google/uuid"
 )
 
 type BookRequest struct {
-	TicketID uuid.UUID `json:"ticket_id"`
-	UserID   uuid.UUID `json:"user_id"` // Mock, actually, it is fetched from JWT
+	TicketID uuid.UUID   `json:"ticket_id"`
+	UserID   uuid.UUID   `json:"user_id"` // Mock, actually, it is fetched from JWT
+	Locks    utils.Locks `json:"locks"`
 }
 
 type BookResponse struct {

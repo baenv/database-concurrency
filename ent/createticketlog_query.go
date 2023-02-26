@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -23,6 +24,7 @@ type CreateTicketLogQuery struct {
 	order      []OrderFunc
 	fields     []string
 	predicates []predicate.CreateTicketLog
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -261,7 +263,6 @@ func (ctlq *CreateTicketLogQuery) Clone() *CreateTicketLogQuery {
 //		GroupBy(createticketlog.FieldTicketID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (ctlq *CreateTicketLogQuery) GroupBy(field string, fields ...string) *CreateTicketLogGroupBy {
 	grbuild := &CreateTicketLogGroupBy{config: ctlq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -288,7 +289,6 @@ func (ctlq *CreateTicketLogQuery) GroupBy(field string, fields ...string) *Creat
 //	client.CreateTicketLog.Query().
 //		Select(createticketlog.FieldTicketID).
 //		Scan(ctx, &v)
-//
 func (ctlq *CreateTicketLogQuery) Select(fields ...string) *CreateTicketLogSelect {
 	ctlq.fields = append(ctlq.fields, fields...)
 	selbuild := &CreateTicketLogSelect{CreateTicketLogQuery: ctlq}
@@ -331,6 +331,9 @@ func (ctlq *CreateTicketLogQuery) sqlAll(ctx context.Context, hooks ...queryHook
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
+	if len(ctlq.modifiers) > 0 {
+		_spec.Modifiers = ctlq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -345,6 +348,9 @@ func (ctlq *CreateTicketLogQuery) sqlAll(ctx context.Context, hooks ...queryHook
 
 func (ctlq *CreateTicketLogQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := ctlq.querySpec()
+	if len(ctlq.modifiers) > 0 {
+		_spec.Modifiers = ctlq.modifiers
+	}
 	_spec.Node.Columns = ctlq.fields
 	if len(ctlq.fields) > 0 {
 		_spec.Unique = ctlq.unique != nil && *ctlq.unique
@@ -426,6 +432,9 @@ func (ctlq *CreateTicketLogQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if ctlq.unique != nil && *ctlq.unique {
 		selector.Distinct()
 	}
+	for _, m := range ctlq.modifiers {
+		m(selector)
+	}
 	for _, p := range ctlq.predicates {
 		p(selector)
 	}
@@ -441,6 +450,32 @@ func (ctlq *CreateTicketLogQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// ForUpdate locks the selected rows against concurrent updates, and prevent them from being
+// updated, deleted or "selected ... for update" by other sessions, until the transaction is
+// either committed or rolled-back.
+func (ctlq *CreateTicketLogQuery) ForUpdate(opts ...sql.LockOption) *CreateTicketLogQuery {
+	if ctlq.driver.Dialect() == dialect.Postgres {
+		ctlq.Unique(false)
+	}
+	ctlq.modifiers = append(ctlq.modifiers, func(s *sql.Selector) {
+		s.ForUpdate(opts...)
+	})
+	return ctlq
+}
+
+// ForShare behaves similarly to ForUpdate, except that it acquires a shared mode lock
+// on any rows that are read. Other sessions can read the rows, but cannot modify them
+// until your transaction commits.
+func (ctlq *CreateTicketLogQuery) ForShare(opts ...sql.LockOption) *CreateTicketLogQuery {
+	if ctlq.driver.Dialect() == dialect.Postgres {
+		ctlq.Unique(false)
+	}
+	ctlq.modifiers = append(ctlq.modifiers, func(s *sql.Selector) {
+		s.ForShare(opts...)
+	})
+	return ctlq
 }
 
 // CreateTicketLogGroupBy is the group-by builder for CreateTicketLog entities.

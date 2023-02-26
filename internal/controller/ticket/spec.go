@@ -3,6 +3,7 @@ package ticket
 import (
 	"context"
 	"database-concurrency/ent"
+	"database-concurrency/internal/controller/utils"
 	"database-concurrency/internal/repository"
 
 	"github.com/google/uuid"
@@ -10,7 +11,7 @@ import (
 )
 
 type Controller interface {
-	Book(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ticket, error)
+	Book(ctx context.Context, ticketID, userID uuid.UUID, locks utils.Locks) (*ent.Ticket, error)
 	// Reserve the ticket
 	Reserve(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ticket, error)
 	// Cancel the ticket

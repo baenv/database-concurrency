@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -28,6 +29,7 @@ type TicketEventQuery struct {
 	predicates []predicate.TicketEvent
 	withUser   *UserQuery
 	withTicket *TicketQuery
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -407,6 +409,9 @@ func (teq *TicketEventQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(teq.modifiers) > 0 {
+		_spec.Modifiers = teq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -486,6 +491,9 @@ func (teq *TicketEventQuery) loadTicket(ctx context.Context, query *TicketQuery,
 
 func (teq *TicketEventQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := teq.querySpec()
+	if len(teq.modifiers) > 0 {
+		_spec.Modifiers = teq.modifiers
+	}
 	_spec.Node.Columns = teq.fields
 	if len(teq.fields) > 0 {
 		_spec.Unique = teq.unique != nil && *teq.unique
@@ -567,6 +575,9 @@ func (teq *TicketEventQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if teq.unique != nil && *teq.unique {
 		selector.Distinct()
 	}
+	for _, m := range teq.modifiers {
+		m(selector)
+	}
 	for _, p := range teq.predicates {
 		p(selector)
 	}
@@ -582,6 +593,32 @@ func (teq *TicketEventQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// ForUpdate locks the selected rows against concurrent updates, and prevent them from being
+// updated, deleted or "selected ... for update" by other sessions, until the transaction is
+// either committed or rolled-back.
+func (teq *TicketEventQuery) ForUpdate(opts ...sql.LockOption) *TicketEventQuery {
+	if teq.driver.Dialect() == dialect.Postgres {
+		teq.Unique(false)
+	}
+	teq.modifiers = append(teq.modifiers, func(s *sql.Selector) {
+		s.ForUpdate(opts...)
+	})
+	return teq
+}
+
+// ForShare behaves similarly to ForUpdate, except that it acquires a shared mode lock
+// on any rows that are read. Other sessions can read the rows, but cannot modify them
+// until your transaction commits.
+func (teq *TicketEventQuery) ForShare(opts ...sql.LockOption) *TicketEventQuery {
+	if teq.driver.Dialect() == dialect.Postgres {
+		teq.Unique(false)
+	}
+	teq.modifiers = append(teq.modifiers, func(s *sql.Selector) {
+		s.ForShare(opts...)
+	})
+	return teq
 }
 
 // TicketEventGroupBy is the group-by builder for TicketEvent entities.

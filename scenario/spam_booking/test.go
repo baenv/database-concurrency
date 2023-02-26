@@ -8,16 +8,39 @@ import (
 	pewpew "github.com/bengadbois/pewpew/lib"
 )
 
-func main() {
-	scenario.Seed("./scenario/spam_booking/testdata/seed.up.sql")
-	defer scenario.Seed("./scenario/spam_booking/testdata/seed.down.sql")
-
-	runScenario()
+type TestCase struct {
+	ReqBody string `json:"req_body"`
 }
 
-func runScenario() {
-	fmt.Println("test scenario SPAM BOOKING started")
-	defer fmt.Println("test scenario SPAM BOOKING completed")
+func main() {
+	tcs := map[string]TestCase{
+		"without_lock": {
+			ReqBody: `{
+				"ticket_id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+				"user_id": "91272a62-c537-42ed-948c-bb2a91af2051"
+			}`,
+		},
+		"with_lock": {
+			ReqBody: `{
+				"ticket_id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+				"user_id": "91272a62-c537-42ed-948c-bb2a91af2051",
+				"locks": {
+					"for_update": true
+				}
+			}`,
+		},
+	}
+
+	for name, tc := range tcs {
+		scenario.Seed("./scenario/spam_booking/testdata/seed.up.sql")
+		runScenario(name, tc)
+		scenario.Seed("./scenario/spam_booking/testdata/seed.down.sql")
+	}
+}
+
+func runScenario(scrName string, testCase TestCase) {
+	fmt.Printf("test scenario SPAM BOOKING for case <%s> started \n", scrName)
+	defer fmt.Printf("test scenario SPAM BOOKING for case <%s> completed \n", scrName)
 	stressCfg := pewpew.StressConfig{
 		Count:       100,
 		Concurrency: 100,
@@ -26,20 +49,30 @@ func runScenario() {
 			URL:     "http://127.0.0.1:8083/api/v1/tickets/book",
 			Timeout: "2s",
 			Method:  "POST",
-			Body:    `{"ticket_id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d", "user_id": "91272a62-c537-42ed-948c-bb2a91af2051"}`,
+			Body:    testCase.ReqBody,
 		}},
 	}
 
-	logFile, err := os.Create("scenario/spam_booking/test.log")
+	logFile, err := os.Create(fmt.Sprintf("scenario/spam_booking/logs/%s.log", scrName))
 	if err != nil {
 		fmt.Printf("failed to create log file: %s", err.Error())
 		return
 	}
 	defer logFile.Close()
 
-	_, err = pewpew.RunStress(stressCfg, logFile)
+	logFile.WriteString("---- Requests ----\n\n")
+
+	stats, err := pewpew.RunStress(stressCfg, logFile)
 	if err != nil {
 		fmt.Printf("pewpew stress failed: %s", err.Error())
 		return
+	}
+
+	logFile.WriteString("\n---- Summary ----\n")
+
+	for _, s := range stats {
+		summary := pewpew.CreateRequestsStats(s)
+		textSummary := pewpew.CreateTextSummary(summary)
+		logFile.WriteString(textSummary)
 	}
 }

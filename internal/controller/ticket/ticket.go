@@ -3,10 +3,10 @@ package ticket
 import (
 	"context"
 	"database-concurrency/ent"
+	"database-concurrency/internal/controller/utils"
 	"database-concurrency/internal/repository"
 	"database-concurrency/internal/transducer"
 	"errors"
-	"fmt"
 	"strconv"
 
 	"github.com/google/uuid"
@@ -18,7 +18,7 @@ type ticket struct {
 	log  *logrus.Logger
 }
 
-func (t ticket) Book(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ticket, error) {
+func (t ticket) Book(ctx context.Context, ticketID, userID uuid.UUID, locks utils.Locks) (*ent.Ticket, error) {
 	// Get ticket
 
 	// Check if ticket is owned by given user
@@ -29,9 +29,33 @@ func (t ticket) Book(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Tick
 
 	// Return value
 
+	if locks.SessionAdvisoryLock {
+		if err := t.repo.AdvisoryLockTable("tickets"); err != nil {
+			t.log.Error("failed to acquire advisory lock", err)
+			return nil, err
+		}
+
+		defer func() {
+			if err := t.repo.AdvisoryUnlockTable("tickets"); err != nil {
+				t.log.Error("failed to release advisory lock", err)
+			}
+		}()
+	}
+
 	var result ent.Ticket
-	return &result, repository.WithTx(ctx, t.repo.Pg(), func(txRepo repository.Repositoy) error {
-		ticket, err := txRepo.Ticket().One(ctx, ticketID)
+	return &result, repository.WithTx(ctx, t.repo.Raw(), t.repo.Pg(), func(txRepo repository.Repositoy) error {
+		var (
+			ticket *ent.Ticket
+			err    error
+		)
+
+		// Handle Lock For Update Flag
+		if locks.ForUpdate {
+			ticket, err = txRepo.Ticket().OneForUpdate(ctx, ticketID)
+		} else {
+			ticket, err = txRepo.Ticket().One(ctx, ticketID)
+		}
+
 		if err != nil {
 			t.log.Error("failed to get ticket", err)
 			return err
@@ -61,8 +85,6 @@ func (t ticket) Book(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Tick
 		}
 
 		var ticketEvent *ent.TicketEvent
-
-		fmt.Println(outputs.Effects)
 
 		for _, effect := range outputs.Effects {
 			switch effect {
@@ -138,7 +160,7 @@ func (t ticket) Reserve(ctx context.Context, ticketID, userID uuid.UUID) (*ent.T
 	for _, effect := range output.Effects {
 		switch effect.Int() {
 		case transducer.UpdateBookingStatus.Int():
-			if err := repository.WithTx(ctx, t.repo.Pg(), func(txRepo repository.Repositoy) error {
+			if err := repository.WithTx(ctx, t.repo.Raw(), t.repo.Pg(), func(txRepo repository.Repositoy) error {
 				ticketEvent, err := txRepo.TicketEvent().Create(ctx, &ent.TicketEvent{
 					TicketID: ticketID,
 					UserID:   userID,
@@ -210,7 +232,7 @@ func (t ticket) Cancel(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ti
 	for _, effect := range output.Effects {
 		switch effect.Int() {
 		case transducer.UpdateBookingStatus.Int():
-			if err := repository.WithTx(ctx, t.repo.Pg(), func(txRepo repository.Repositoy) error {
+			if err := repository.WithTx(ctx, t.repo.Raw(), t.repo.Pg(), func(txRepo repository.Repositoy) error {
 				ticketEvent, err := txRepo.TicketEvent().Create(ctx, &ent.TicketEvent{
 					TicketID: ticketID,
 					UserID:   userID,

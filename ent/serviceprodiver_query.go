@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -24,6 +25,7 @@ type ServiceProdiverQuery struct {
 	order      []OrderFunc
 	fields     []string
 	predicates []predicate.ServiceProdiver
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -330,6 +332,9 @@ func (spq *ServiceProdiverQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
+	if len(spq.modifiers) > 0 {
+		_spec.Modifiers = spq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -344,6 +349,9 @@ func (spq *ServiceProdiverQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 
 func (spq *ServiceProdiverQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := spq.querySpec()
+	if len(spq.modifiers) > 0 {
+		_spec.Modifiers = spq.modifiers
+	}
 	_spec.Node.Columns = spq.fields
 	if len(spq.fields) > 0 {
 		_spec.Unique = spq.unique != nil && *spq.unique
@@ -425,6 +433,9 @@ func (spq *ServiceProdiverQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if spq.unique != nil && *spq.unique {
 		selector.Distinct()
 	}
+	for _, m := range spq.modifiers {
+		m(selector)
+	}
 	for _, p := range spq.predicates {
 		p(selector)
 	}
@@ -440,6 +451,32 @@ func (spq *ServiceProdiverQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// ForUpdate locks the selected rows against concurrent updates, and prevent them from being
+// updated, deleted or "selected ... for update" by other sessions, until the transaction is
+// either committed or rolled-back.
+func (spq *ServiceProdiverQuery) ForUpdate(opts ...sql.LockOption) *ServiceProdiverQuery {
+	if spq.driver.Dialect() == dialect.Postgres {
+		spq.Unique(false)
+	}
+	spq.modifiers = append(spq.modifiers, func(s *sql.Selector) {
+		s.ForUpdate(opts...)
+	})
+	return spq
+}
+
+// ForShare behaves similarly to ForUpdate, except that it acquires a shared mode lock
+// on any rows that are read. Other sessions can read the rows, but cannot modify them
+// until your transaction commits.
+func (spq *ServiceProdiverQuery) ForShare(opts ...sql.LockOption) *ServiceProdiverQuery {
+	if spq.driver.Dialect() == dialect.Postgres {
+		spq.Unique(false)
+	}
+	spq.modifiers = append(spq.modifiers, func(s *sql.Selector) {
+		s.ForShare(opts...)
+	})
+	return spq
 }
 
 // ServiceProdiverGroupBy is the group-by builder for ServiceProdiver entities.

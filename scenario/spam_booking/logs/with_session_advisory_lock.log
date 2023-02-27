@@ -1,0 +1,123 @@
+---- Requests ----
+
+Stress testing 1 target:
+- Running 100 tests at http://127.0.0.1:8083/api/v1/tickets/book, 100 at a time
+HTTP/1.1 500	509 B 	101 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	526 B 	230 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	526 B 	235 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	526 B 	269 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	319 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	334 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	355 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	363 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	373 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	411 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	412 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	429 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	430 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	429 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	429 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	429 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	430 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	443 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	453 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	455 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	455 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	460 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	458 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	460 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	460 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	459 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	464 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	464 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	465 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	467 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	468 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	475 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	478 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	478 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	478 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	479 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	479 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	481 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	481 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	481 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	483 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	485 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	488 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	494 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	496 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	505 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	506 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	508 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	508 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	508 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	513 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	512 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	513 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	513 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	513 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	511 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	513 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	516 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	517 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	517 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	517 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	518 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	520 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	521 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	522 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	523 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	527 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	527 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	527 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	527 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	527 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	530 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	533 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	533 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	535 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	536 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	538 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	539 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	540 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	540 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	541 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	542 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	545 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	545 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	549 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	552 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	553 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	553 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	555 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 200	1.0 kB 	556 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	557 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	558 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	476 B 	559 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	573 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	575 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	579 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	476 B 	584 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	476 B 	584 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	509 B 	585 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+HTTP/1.1 500	476 B 	593 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/book
+
+---- Summary ----
+
+Timing
+Mean query speed:     487 ms
+Fastest query speed:  101 ms
+Slowest query speed:  593 ms
+Mean RPS:             168.31 req/sec
+Total time:           594 ms
+
+Data Transferred
+Mean query:      513 B
+Largest query:   1.0 kB
+Smallest query:  476 B
+Total:           51 kB
+
+Response Codes
+200: 1 responses (1.00%)
+500: 99 responses (99.00%)

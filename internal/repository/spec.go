@@ -25,16 +25,20 @@ import (
 // The general Repository that contains all other model-repositories
 type Repositoy interface {
 	Pg() *ent.Client
+	Raw() *sql.DB
 	Transaction() transactionRepo.Repository
 	User() userRepo.Repository
 	ServiceProvider() serviceproviderRepo.Repository
 	Ticket() ticketRepo.Repository
 	TicketEvent() ticketeventRepo.Repository
+	AdvisoryLockTable(table string) error
+	AdvisoryUnlockTable(table string) error
 }
 
 // New is used to create new repository
-func New(pg *ent.Client) (Repositoy, error) {
+func New(rawDB *sql.DB, pg *ent.Client) (Repositoy, error) {
 	return &db{
+		raw:         rawDB,
 		pg:          pg,
 		transaction: transactionRepo.NewPGRepo(pg),
 
@@ -97,16 +101,16 @@ func Init(cfg config.Config) (Repositoy, error) {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	return New(client)
+	return New(db, client)
 }
 
-func WithTx(ctx context.Context, client *ent.Client, fn func(repo Repositoy) error) error {
+func WithTx(ctx context.Context, rawDB *sql.DB, client *ent.Client, fn func(repo Repositoy) error) error {
 	tx, err := client.Tx(ctx)
 	if err != nil {
 		return err
 	}
 
-	repo, err := New(tx.Client())
+	repo, err := New(rawDB, tx.Client())
 	if err != nil {
 		return err
 	}

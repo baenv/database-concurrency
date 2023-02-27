@@ -21,7 +21,7 @@ func (h handler) Book(ctx echo.Context) error {
 		return echo.NewHTTPError(400, "user_id is required")
 	}
 
-	result, err := h.ctrl.TicketCtrl().Book(ctx.Request().Context(), req.TicketID, req.UserID)
+	result, err := h.ctrl.TicketCtrl().Book(ctx.Request().Context(), req.TicketID, req.UserID, req.Locks)
 	if err != nil {
 		return echo.NewHTTPError(500, err.Error())
 	}

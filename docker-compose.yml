@@ -96,6 +96,28 @@ services:
       - postgres
     command: "server" 
     restart: always
+    
+  id-gen-server:
+    platform: linux/amd64
+    container_name: id-gen-server
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+    image: id-gen-server
+    build:
+      dockerfile: Dockerfile.Server
+      context: .
+      target: runner
+      args:
+        - DEFAULT_PORT = ${ID_GEN_SERVER_PORT}
+    ports:
+      - ${ID_GEN_SERVER_PORT}:${ID_GEN_SERVER_PORT}
+    links:
+      - postgres
+    depends_on:
+      - postgres
+    command: "server" 
+    restart: always
 
   queue:
     platform: linux/amd64

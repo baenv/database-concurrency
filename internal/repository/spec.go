@@ -8,6 +8,7 @@ import (
 
 	"database-concurrency/config"
 	"database-concurrency/ent"
+	createticketlogRepo "database-concurrency/internal/repository/createticketlog"
 	serviceproviderRepo "database-concurrency/internal/repository/serviceprovider"
 	ticketRepo "database-concurrency/internal/repository/ticket"
 	ticketeventRepo "database-concurrency/internal/repository/ticketevent"
@@ -23,7 +24,7 @@ import (
 )
 
 // The general Repository that contains all other model-repositories
-type Repositoy interface {
+type Repository interface {
 	Pg() *ent.Client
 	Raw() *sql.DB
 	Transaction() transactionRepo.Repository
@@ -31,12 +32,13 @@ type Repositoy interface {
 	ServiceProvider() serviceproviderRepo.Repository
 	Ticket() ticketRepo.Repository
 	TicketEvent() ticketeventRepo.Repository
+	CreateTicketLog() createticketlogRepo.Repository
 	AdvisoryLockTable(table string) error
 	AdvisoryUnlockTable(table string) error
 }
 
 // New is used to create new repository
-func New(rawDB *sql.DB, pg *ent.Client) (Repositoy, error) {
+func New(rawDB *sql.DB, pg *ent.Client) (Repository, error) {
 	return &db{
 		raw:         rawDB,
 		pg:          pg,
@@ -47,10 +49,11 @@ func New(rawDB *sql.DB, pg *ent.Client) (Repositoy, error) {
 		serviceProvider: serviceproviderRepo.NewPGRepo(pg),
 		ticket:          ticketRepo.NewPGRepo(pg),
 		ticketEvent:     ticketeventRepo.NewPGRepo(pg),
+		createTicketLog: createticketlogRepo.NewPGRepo(pg),
 	}, nil
 }
 
-func Init(cfg config.Config) (Repositoy, error) {
+func Init(cfg config.Config) (Repository, error) {
 	dns := fmt.Sprintf(
 		"postgresql://%s:%s@%s:%s/%s?sslmode=disable",
 		cfg.DBUSER,
@@ -104,7 +107,7 @@ func Init(cfg config.Config) (Repositoy, error) {
 	return New(db, client)
 }
 
-func WithTx(ctx context.Context, rawDB *sql.DB, client *ent.Client, fn func(repo Repositoy) error) error {
+func WithTx(ctx context.Context, rawDB *sql.DB, client *ent.Client, fn func(repo Repository) error) error {
 	tx, err := client.Tx(ctx)
 	if err != nil {
 		return err

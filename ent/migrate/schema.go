@@ -10,7 +10,6 @@ import (
 var (
 	// CreateTicketLogsColumns holds the columns for the "create_ticket_logs" table.
 	CreateTicketLogsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "ticket_id", Type: field.TypeUUID},
 		{Name: "unique_id", Type: field.TypeUUID, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},

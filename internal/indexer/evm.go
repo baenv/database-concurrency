@@ -17,7 +17,7 @@ import (
 
 type evm struct {
 	chain int64
-	repo  repository.Repositoy
+	repo  repository.Repository
 	cfg   config.Config
 	log   *logrus.Logger
 	tq    queue.Queue

@@ -199,7 +199,7 @@ func (c *CreateTicketLogClient) UpdateOne(ctl *CreateTicketLog) *CreateTicketLog
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *CreateTicketLogClient) UpdateOneID(id int) *CreateTicketLogUpdateOne {
+func (c *CreateTicketLogClient) UpdateOneID(id uuid.UUID) *CreateTicketLogUpdateOne {
 	mutation := newCreateTicketLogMutation(c.config, OpUpdateOne, withCreateTicketLogID(id))
 	return &CreateTicketLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -216,7 +216,7 @@ func (c *CreateTicketLogClient) DeleteOne(ctl *CreateTicketLog) *CreateTicketLog
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *CreateTicketLogClient) DeleteOneID(id int) *CreateTicketLogDeleteOne {
+func (c *CreateTicketLogClient) DeleteOneID(id uuid.UUID) *CreateTicketLogDeleteOne {
 	builder := c.Delete().Where(createticketlog.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -231,12 +231,12 @@ func (c *CreateTicketLogClient) Query() *CreateTicketLogQuery {
 }
 
 // Get returns a CreateTicketLog entity by its id.
-func (c *CreateTicketLogClient) Get(ctx context.Context, id int) (*CreateTicketLog, error) {
+func (c *CreateTicketLogClient) Get(ctx context.Context, id uuid.UUID) (*CreateTicketLog, error) {
 	return c.Query().Where(createticketlog.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *CreateTicketLogClient) GetX(ctx context.Context, id int) *CreateTicketLog {
+func (c *CreateTicketLogClient) GetX(ctx context.Context, id uuid.UUID) *CreateTicketLog {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

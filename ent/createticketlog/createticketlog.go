@@ -12,9 +12,7 @@ const (
 	// Label holds the string label denoting the createticketlog type in the database.
 	Label = "create_ticket_log"
 	// FieldID holds the string denoting the id field in the database.
-	FieldID = "id"
-	// FieldTicketID holds the string denoting the ticket_id field in the database.
-	FieldTicketID = "ticket_id"
+	FieldID = "ticket_id"
 	// FieldUniqueID holds the string denoting the unique_id field in the database.
 	FieldUniqueID = "unique_id"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -28,7 +26,6 @@ const (
 // Columns holds all SQL columns for createticketlog fields.
 var Columns = []string{
 	FieldID,
-	FieldTicketID,
 	FieldUniqueID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
@@ -45,12 +42,12 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultTicketID holds the default value on creation for the "ticket_id" field.
-	DefaultTicketID func() uuid.UUID
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultID holds the default value on creation for the "id" field.
+	DefaultID func() uuid.UUID
 )

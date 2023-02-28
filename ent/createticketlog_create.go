@@ -21,20 +21,6 @@ type CreateTicketLogCreate struct {
 	hooks    []Hook
 }
 
-// SetTicketID sets the "ticket_id" field.
-func (ctlc *CreateTicketLogCreate) SetTicketID(u uuid.UUID) *CreateTicketLogCreate {
-	ctlc.mutation.SetTicketID(u)
-	return ctlc
-}
-
-// SetNillableTicketID sets the "ticket_id" field if the given value is not nil.
-func (ctlc *CreateTicketLogCreate) SetNillableTicketID(u *uuid.UUID) *CreateTicketLogCreate {
-	if u != nil {
-		ctlc.SetTicketID(*u)
-	}
-	return ctlc
-}
-
 // SetUniqueID sets the "unique_id" field.
 func (ctlc *CreateTicketLogCreate) SetUniqueID(u uuid.UUID) *CreateTicketLogCreate {
 	ctlc.mutation.SetUniqueID(u)
@@ -65,6 +51,20 @@ func (ctlc *CreateTicketLogCreate) SetUpdatedAt(t time.Time) *CreateTicketLogCre
 func (ctlc *CreateTicketLogCreate) SetNillableUpdatedAt(t *time.Time) *CreateTicketLogCreate {
 	if t != nil {
 		ctlc.SetUpdatedAt(*t)
+	}
+	return ctlc
+}
+
+// SetID sets the "id" field.
+func (ctlc *CreateTicketLogCreate) SetID(u uuid.UUID) *CreateTicketLogCreate {
+	ctlc.mutation.SetID(u)
+	return ctlc
+}
+
+// SetNillableID sets the "id" field if the given value is not nil.
+func (ctlc *CreateTicketLogCreate) SetNillableID(u *uuid.UUID) *CreateTicketLogCreate {
+	if u != nil {
+		ctlc.SetID(*u)
 	}
 	return ctlc
 }
@@ -146,10 +146,6 @@ func (ctlc *CreateTicketLogCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ctlc *CreateTicketLogCreate) defaults() {
-	if _, ok := ctlc.mutation.TicketID(); !ok {
-		v := createticketlog.DefaultTicketID()
-		ctlc.mutation.SetTicketID(v)
-	}
 	if _, ok := ctlc.mutation.CreatedAt(); !ok {
 		v := createticketlog.DefaultCreatedAt()
 		ctlc.mutation.SetCreatedAt(v)
@@ -158,13 +154,14 @@ func (ctlc *CreateTicketLogCreate) defaults() {
 		v := createticketlog.DefaultUpdatedAt()
 		ctlc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := ctlc.mutation.ID(); !ok {
+		v := createticketlog.DefaultID()
+		ctlc.mutation.SetID(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (ctlc *CreateTicketLogCreate) check() error {
-	if _, ok := ctlc.mutation.TicketID(); !ok {
-		return &ValidationError{Name: "ticket_id", err: errors.New(`ent: missing required field "CreateTicketLog.ticket_id"`)}
-	}
 	if _, ok := ctlc.mutation.UniqueID(); !ok {
 		return &ValidationError{Name: "unique_id", err: errors.New(`ent: missing required field "CreateTicketLog.unique_id"`)}
 	}
@@ -185,8 +182,13 @@ func (ctlc *CreateTicketLogCreate) sqlSave(ctx context.Context) (*CreateTicketLo
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
+			_node.ID = *id
+		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
+			return nil, err
+		}
+	}
 	return _node, nil
 }
 
@@ -196,14 +198,14 @@ func (ctlc *CreateTicketLogCreate) createSpec() (*CreateTicketLog, *sqlgraph.Cre
 		_spec = &sqlgraph.CreateSpec{
 			Table: createticketlog.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: createticketlog.FieldID,
 			},
 		}
 	)
-	if value, ok := ctlc.mutation.TicketID(); ok {
-		_spec.SetField(createticketlog.FieldTicketID, field.TypeUUID, value)
-		_node.TicketID = value
+	if id, ok := ctlc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = &id
 	}
 	if value, ok := ctlc.mutation.UniqueID(); ok {
 		_spec.SetField(createticketlog.FieldUniqueID, field.TypeUUID, value)
@@ -261,10 +263,6 @@ func (ctlcb *CreateTicketLogCreateBulk) Save(ctx context.Context) ([]*CreateTick
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				mutation.done = true
 				return nodes[i], nil
 			})

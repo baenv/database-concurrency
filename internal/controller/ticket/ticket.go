@@ -14,7 +14,7 @@ import (
 )
 
 type ticket struct {
-	repo repository.Repositoy
+	repo repository.Repository
 	log  *logrus.Logger
 }
 
@@ -43,7 +43,7 @@ func (t ticket) Book(ctx context.Context, ticketID, userID uuid.UUID, locks util
 	}
 
 	var result ent.Ticket
-	return &result, repository.WithTx(ctx, t.repo.Raw(), t.repo.Pg(), func(txRepo repository.Repositoy) error {
+	return &result, repository.WithTx(ctx, t.repo.Raw(), t.repo.Pg(), func(txRepo repository.Repository) error {
 		var (
 			ticket *ent.Ticket
 			err    error
@@ -160,7 +160,7 @@ func (t ticket) Reserve(ctx context.Context, ticketID, userID uuid.UUID) (*ent.T
 	for _, effect := range output.Effects {
 		switch effect.Int() {
 		case transducer.UpdateBookingStatus.Int():
-			if err := repository.WithTx(ctx, t.repo.Raw(), t.repo.Pg(), func(txRepo repository.Repositoy) error {
+			if err := repository.WithTx(ctx, t.repo.Raw(), t.repo.Pg(), func(txRepo repository.Repository) error {
 				ticketEvent, err := txRepo.TicketEvent().Create(ctx, &ent.TicketEvent{
 					TicketID: ticketID,
 					UserID:   userID,

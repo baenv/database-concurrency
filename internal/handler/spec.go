@@ -16,10 +16,13 @@ type Handler interface {
 	Reserve(ctx echo.Context) error
 	// Cancel cancel a ticket
 	Cancel(ctx echo.Context) error
+
+	// GenTicketID gen new ticket id for creating ticket, id gen API ONLY
+	GenTicketID(ctx echo.Context) error
 }
 
 // New is used to create new controller
-func New(repo repository.Repositoy, log *logrus.Logger) Handler {
+func New(repo repository.Repository, log *logrus.Logger) Handler {
 	return handler{
 		ctrl: controller.New(repo, log),
 	}

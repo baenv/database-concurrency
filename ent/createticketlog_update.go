@@ -29,20 +29,6 @@ func (ctlu *CreateTicketLogUpdate) Where(ps ...predicate.CreateTicketLog) *Creat
 	return ctlu
 }
 
-// SetTicketID sets the "ticket_id" field.
-func (ctlu *CreateTicketLogUpdate) SetTicketID(u uuid.UUID) *CreateTicketLogUpdate {
-	ctlu.mutation.SetTicketID(u)
-	return ctlu
-}
-
-// SetNillableTicketID sets the "ticket_id" field if the given value is not nil.
-func (ctlu *CreateTicketLogUpdate) SetNillableTicketID(u *uuid.UUID) *CreateTicketLogUpdate {
-	if u != nil {
-		ctlu.SetTicketID(*u)
-	}
-	return ctlu
-}
-
 // SetUniqueID sets the "unique_id" field.
 func (ctlu *CreateTicketLogUpdate) SetUniqueID(u uuid.UUID) *CreateTicketLogUpdate {
 	ctlu.mutation.SetUniqueID(u)
@@ -143,7 +129,7 @@ func (ctlu *CreateTicketLogUpdate) sqlSave(ctx context.Context) (n int, err erro
 			Table:   createticketlog.Table,
 			Columns: createticketlog.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: createticketlog.FieldID,
 			},
 		},
@@ -154,9 +140,6 @@ func (ctlu *CreateTicketLogUpdate) sqlSave(ctx context.Context) (n int, err erro
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := ctlu.mutation.TicketID(); ok {
-		_spec.SetField(createticketlog.FieldTicketID, field.TypeUUID, value)
 	}
 	if value, ok := ctlu.mutation.UniqueID(); ok {
 		_spec.SetField(createticketlog.FieldUniqueID, field.TypeUUID, value)
@@ -184,20 +167,6 @@ type CreateTicketLogUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *CreateTicketLogMutation
-}
-
-// SetTicketID sets the "ticket_id" field.
-func (ctluo *CreateTicketLogUpdateOne) SetTicketID(u uuid.UUID) *CreateTicketLogUpdateOne {
-	ctluo.mutation.SetTicketID(u)
-	return ctluo
-}
-
-// SetNillableTicketID sets the "ticket_id" field if the given value is not nil.
-func (ctluo *CreateTicketLogUpdateOne) SetNillableTicketID(u *uuid.UUID) *CreateTicketLogUpdateOne {
-	if u != nil {
-		ctluo.SetTicketID(*u)
-	}
-	return ctluo
 }
 
 // SetUniqueID sets the "unique_id" field.
@@ -313,7 +282,7 @@ func (ctluo *CreateTicketLogUpdateOne) sqlSave(ctx context.Context) (_node *Crea
 			Table:   createticketlog.Table,
 			Columns: createticketlog.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: createticketlog.FieldID,
 			},
 		},
@@ -341,9 +310,6 @@ func (ctluo *CreateTicketLogUpdateOne) sqlSave(ctx context.Context) (_node *Crea
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := ctluo.mutation.TicketID(); ok {
-		_spec.SetField(createticketlog.FieldTicketID, field.TypeUUID, value)
 	}
 	if value, ok := ctluo.mutation.UniqueID(); ok {
 		_spec.SetField(createticketlog.FieldUniqueID, field.TypeUUID, value)

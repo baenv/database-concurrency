@@ -16,7 +16,7 @@ type CreateTicketLog struct {
 // Fields of the CreateTicketLog.
 func (CreateTicketLog) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("ticket_id", uuid.UUID{}).Default(uuid.New),
+		field.UUID("id", uuid.UUID{}).Default(uuid.New).StorageKey("ticket_id"),
 		field.UUID("unique_id", uuid.UUID{}).Unique(),
 		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),

@@ -21,10 +21,6 @@ import (
 func init() {
 	createticketlogFields := schema.CreateTicketLog{}.Fields()
 	_ = createticketlogFields
-	// createticketlogDescTicketID is the schema descriptor for ticket_id field.
-	createticketlogDescTicketID := createticketlogFields[0].Descriptor()
-	// createticketlog.DefaultTicketID holds the default value on creation for the ticket_id field.
-	createticketlog.DefaultTicketID = createticketlogDescTicketID.Default.(func() uuid.UUID)
 	// createticketlogDescCreatedAt is the schema descriptor for created_at field.
 	createticketlogDescCreatedAt := createticketlogFields[2].Descriptor()
 	// createticketlog.DefaultCreatedAt holds the default value on creation for the created_at field.
@@ -35,6 +31,10 @@ func init() {
 	createticketlog.DefaultUpdatedAt = createticketlogDescUpdatedAt.Default.(func() time.Time)
 	// createticketlog.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	createticketlog.UpdateDefaultUpdatedAt = createticketlogDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// createticketlogDescID is the schema descriptor for id field.
+	createticketlogDescID := createticketlogFields[0].Descriptor()
+	// createticketlog.DefaultID holds the default value on creation for the id field.
+	createticketlog.DefaultID = createticketlogDescID.Default.(func() uuid.UUID)
 	serviceprodiverFields := schema.ServiceProdiver{}.Fields()
 	_ = serviceprodiverFields
 	// serviceprodiverDescCreatedAt is the schema descriptor for created_at field.

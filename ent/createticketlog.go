@@ -16,9 +16,7 @@ import (
 type CreateTicketLog struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
-	// TicketID holds the value of the "ticket_id" field.
-	TicketID uuid.UUID `json:"ticket_id,omitempty"`
+	ID uuid.UUID `json:"id,omitempty"`
 	// UniqueID holds the value of the "unique_id" field.
 	UniqueID uuid.UUID `json:"unique_id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -32,11 +30,9 @@ func (*CreateTicketLog) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case createticketlog.FieldID:
-			values[i] = new(sql.NullInt64)
 		case createticketlog.FieldCreatedAt, createticketlog.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case createticketlog.FieldTicketID, createticketlog.FieldUniqueID:
+		case createticketlog.FieldID, createticketlog.FieldUniqueID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type CreateTicketLog", columns[i])
@@ -54,16 +50,10 @@ func (ctl *CreateTicketLog) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case createticketlog.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
-			}
-			ctl.ID = int(value.Int64)
-		case createticketlog.FieldTicketID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field ticket_id", values[i])
+				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				ctl.TicketID = *value
+				ctl.ID = *value
 			}
 		case createticketlog.FieldUniqueID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -111,9 +101,6 @@ func (ctl *CreateTicketLog) String() string {
 	var builder strings.Builder
 	builder.WriteString("CreateTicketLog(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", ctl.ID))
-	builder.WriteString("ticket_id=")
-	builder.WriteString(fmt.Sprintf("%v", ctl.TicketID))
-	builder.WriteString(", ")
 	builder.WriteString("unique_id=")
 	builder.WriteString(fmt.Sprintf("%v", ctl.UniqueID))
 	builder.WriteString(", ")

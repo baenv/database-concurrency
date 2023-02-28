@@ -9,7 +9,7 @@ import (
 )
 
 type transaction struct {
-	repo repository.Repositoy
+	repo repository.Repository
 	log  *logrus.Logger
 }
 

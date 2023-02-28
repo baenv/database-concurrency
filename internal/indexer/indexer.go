@@ -15,7 +15,7 @@ type Indexer interface {
 }
 
 // New is used to create new indexer
-func NewEVM(chain int64, repo repository.Repositoy, cfg config.Config, tq queue.Queue, log *logrus.Logger) Indexer {
+func NewEVM(chain int64, repo repository.Repository, cfg config.Config, tq queue.Queue, log *logrus.Logger) Indexer {
 	// Create new logger with chain field
 	indexerLog := *log.WithField("chain", chain).Logger
 

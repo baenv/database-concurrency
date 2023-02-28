@@ -1,19 +1,19 @@
-package transaction
+package gen
 
 import (
 	"context"
-	"database-concurrency/ent"
 	"database-concurrency/internal/repository"
 
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
 type Controller interface {
-	OneByHash(ctx context.Context, hash string) (*ent.Transaction, error)
+	CreateTicketID(ctx context.Context, uniqueID uuid.UUID) (string, error)
 }
 
 func New(repo repository.Repository, log *logrus.Logger) Controller {
-	return transaction{
+	return gen{
 		repo: repo,
 		log:  log,
 	}

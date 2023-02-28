@@ -72,7 +72,7 @@ func (ctld *CreateTicketLogDelete) sqlExec(ctx context.Context) (int, error) {
 		Node: &sqlgraph.NodeSpec{
 			Table: createticketlog.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: createticketlog.FieldID,
 			},
 		},

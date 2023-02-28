@@ -23,6 +23,9 @@ type Config struct {
 
 	// SERVER
 	SERVER_PORT string `envconfig:"SERVER_PORT"`
+
+	// ID_GEN_SERVER
+	ID_GEN_SERVER_PORT string `envconfig:"ID_GEN_SERVER_PORT"`
 }
 
 // NewConfig loads and returns a new Config instance

@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // CreateTicketLogQuery is the builder for querying CreateTicketLog entities.
@@ -85,8 +86,8 @@ func (ctlq *CreateTicketLogQuery) FirstX(ctx context.Context) *CreateTicketLog {
 
 // FirstID returns the first CreateTicketLog ID from the query.
 // Returns a *NotFoundError when no CreateTicketLog ID was found.
-func (ctlq *CreateTicketLogQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (ctlq *CreateTicketLogQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = ctlq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -98,7 +99,7 @@ func (ctlq *CreateTicketLogQuery) FirstID(ctx context.Context) (id int, err erro
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (ctlq *CreateTicketLogQuery) FirstIDX(ctx context.Context) int {
+func (ctlq *CreateTicketLogQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := ctlq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -136,8 +137,8 @@ func (ctlq *CreateTicketLogQuery) OnlyX(ctx context.Context) *CreateTicketLog {
 // OnlyID is like Only, but returns the only CreateTicketLog ID in the query.
 // Returns a *NotSingularError when more than one CreateTicketLog ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (ctlq *CreateTicketLogQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (ctlq *CreateTicketLogQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = ctlq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -153,7 +154,7 @@ func (ctlq *CreateTicketLogQuery) OnlyID(ctx context.Context) (id int, err error
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (ctlq *CreateTicketLogQuery) OnlyIDX(ctx context.Context) int {
+func (ctlq *CreateTicketLogQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := ctlq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -179,8 +180,8 @@ func (ctlq *CreateTicketLogQuery) AllX(ctx context.Context) []*CreateTicketLog {
 }
 
 // IDs executes the query and returns a list of CreateTicketLog IDs.
-func (ctlq *CreateTicketLogQuery) IDs(ctx context.Context) ([]int, error) {
-	var ids []int
+func (ctlq *CreateTicketLogQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	var ids []uuid.UUID
 	if err := ctlq.Select(createticketlog.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -188,7 +189,7 @@ func (ctlq *CreateTicketLogQuery) IDs(ctx context.Context) ([]int, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (ctlq *CreateTicketLogQuery) IDsX(ctx context.Context) []int {
+func (ctlq *CreateTicketLogQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := ctlq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -255,12 +256,12 @@ func (ctlq *CreateTicketLogQuery) Clone() *CreateTicketLogQuery {
 // Example:
 //
 //	var v []struct {
-//		TicketID uuid.UUID `json:"ticket_id,omitempty"`
+//		UniqueID uuid.UUID `json:"unique_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.CreateTicketLog.Query().
-//		GroupBy(createticketlog.FieldTicketID).
+//		GroupBy(createticketlog.FieldUniqueID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (ctlq *CreateTicketLogQuery) GroupBy(field string, fields ...string) *CreateTicketLogGroupBy {
@@ -283,11 +284,11 @@ func (ctlq *CreateTicketLogQuery) GroupBy(field string, fields ...string) *Creat
 // Example:
 //
 //	var v []struct {
-//		TicketID uuid.UUID `json:"ticket_id,omitempty"`
+//		UniqueID uuid.UUID `json:"unique_id,omitempty"`
 //	}
 //
 //	client.CreateTicketLog.Query().
-//		Select(createticketlog.FieldTicketID).
+//		Select(createticketlog.FieldUniqueID).
 //		Scan(ctx, &v)
 func (ctlq *CreateTicketLogQuery) Select(fields ...string) *CreateTicketLogSelect {
 	ctlq.fields = append(ctlq.fields, fields...)
@@ -375,7 +376,7 @@ func (ctlq *CreateTicketLogQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   createticketlog.Table,
 			Columns: createticketlog.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: createticketlog.FieldID,
 			},
 		},

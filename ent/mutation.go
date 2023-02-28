@@ -43,8 +43,7 @@ type CreateTicketLogMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int
-	ticket_id     *uuid.UUID
+	id            *uuid.UUID
 	unique_id     *uuid.UUID
 	created_at    *time.Time
 	updated_at    *time.Time
@@ -74,7 +73,7 @@ func newCreateTicketLogMutation(c config, op Op, opts ...createticketlogOption) 
 }
 
 // withCreateTicketLogID sets the ID field of the mutation.
-func withCreateTicketLogID(id int) createticketlogOption {
+func withCreateTicketLogID(id uuid.UUID) createticketlogOption {
 	return func(m *CreateTicketLogMutation) {
 		var (
 			err   error
@@ -124,9 +123,15 @@ func (m CreateTicketLogMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of CreateTicketLog entities.
+func (m *CreateTicketLogMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *CreateTicketLogMutation) ID() (id int, exists bool) {
+func (m *CreateTicketLogMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -137,12 +142,12 @@ func (m *CreateTicketLogMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *CreateTicketLogMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *CreateTicketLogMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []uuid.UUID{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -150,42 +155,6 @@ func (m *CreateTicketLogMutation) IDs(ctx context.Context) ([]int, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
-}
-
-// SetTicketID sets the "ticket_id" field.
-func (m *CreateTicketLogMutation) SetTicketID(u uuid.UUID) {
-	m.ticket_id = &u
-}
-
-// TicketID returns the value of the "ticket_id" field in the mutation.
-func (m *CreateTicketLogMutation) TicketID() (r uuid.UUID, exists bool) {
-	v := m.ticket_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTicketID returns the old "ticket_id" field's value of the CreateTicketLog entity.
-// If the CreateTicketLog object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CreateTicketLogMutation) OldTicketID(ctx context.Context) (v uuid.UUID, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTicketID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTicketID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTicketID: %w", err)
-	}
-	return oldValue.TicketID, nil
-}
-
-// ResetTicketID resets all changes to the "ticket_id" field.
-func (m *CreateTicketLogMutation) ResetTicketID() {
-	m.ticket_id = nil
 }
 
 // SetUniqueID sets the "unique_id" field.
@@ -315,10 +284,7 @@ func (m *CreateTicketLogMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CreateTicketLogMutation) Fields() []string {
-	fields := make([]string, 0, 4)
-	if m.ticket_id != nil {
-		fields = append(fields, createticketlog.FieldTicketID)
-	}
+	fields := make([]string, 0, 3)
 	if m.unique_id != nil {
 		fields = append(fields, createticketlog.FieldUniqueID)
 	}
@@ -336,8 +302,6 @@ func (m *CreateTicketLogMutation) Fields() []string {
 // schema.
 func (m *CreateTicketLogMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case createticketlog.FieldTicketID:
-		return m.TicketID()
 	case createticketlog.FieldUniqueID:
 		return m.UniqueID()
 	case createticketlog.FieldCreatedAt:
@@ -353,8 +317,6 @@ func (m *CreateTicketLogMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *CreateTicketLogMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case createticketlog.FieldTicketID:
-		return m.OldTicketID(ctx)
 	case createticketlog.FieldUniqueID:
 		return m.OldUniqueID(ctx)
 	case createticketlog.FieldCreatedAt:
@@ -370,13 +332,6 @@ func (m *CreateTicketLogMutation) OldField(ctx context.Context, name string) (en
 // type.
 func (m *CreateTicketLogMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case createticketlog.FieldTicketID:
-		v, ok := value.(uuid.UUID)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTicketID(v)
-		return nil
 	case createticketlog.FieldUniqueID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
@@ -447,9 +402,6 @@ func (m *CreateTicketLogMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *CreateTicketLogMutation) ResetField(name string) error {
 	switch name {
-	case createticketlog.FieldTicketID:
-		m.ResetTicketID()
-		return nil
 	case createticketlog.FieldUniqueID:
 		m.ResetUniqueID()
 		return nil

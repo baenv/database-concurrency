@@ -17,7 +17,7 @@ type Queue interface {
 	NewClient() *asynq.Client
 }
 
-func NewAsynqQueue(repo repository.Repositoy, cfg config.Config, log *logrus.Logger) Queue {
+func NewAsynqQueue(repo repository.Repository, cfg config.Config, log *logrus.Logger) Queue {
 	queueLog := *log
 
 	return asynqQueue{

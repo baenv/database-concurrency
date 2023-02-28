@@ -13,7 +13,7 @@ import (
 )
 
 type asynqQueue struct {
-	repo repository.Repositoy
+	repo repository.Repository
 	log  *logrus.Logger
 	cfg  config.Config
 }

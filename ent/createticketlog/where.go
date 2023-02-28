@@ -11,28 +11,28 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.CreateTicketLog {
+func ID(id uuid.UUID) predicate.CreateTicketLog {
 	return predicate.CreateTicketLog(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldID), id))
 	})
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.CreateTicketLog {
+func IDEQ(id uuid.UUID) predicate.CreateTicketLog {
 	return predicate.CreateTicketLog(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldID), id))
 	})
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.CreateTicketLog {
+func IDNEQ(id uuid.UUID) predicate.CreateTicketLog {
 	return predicate.CreateTicketLog(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldID), id))
 	})
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.CreateTicketLog {
+func IDIn(ids ...uuid.UUID) predicate.CreateTicketLog {
 	return predicate.CreateTicketLog(func(s *sql.Selector) {
 		v := make([]any, len(ids))
 		for i := range v {
@@ -43,7 +43,7 @@ func IDIn(ids ...int) predicate.CreateTicketLog {
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.CreateTicketLog {
+func IDNotIn(ids ...uuid.UUID) predicate.CreateTicketLog {
 	return predicate.CreateTicketLog(func(s *sql.Selector) {
 		v := make([]any, len(ids))
 		for i := range v {
@@ -54,37 +54,30 @@ func IDNotIn(ids ...int) predicate.CreateTicketLog {
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.CreateTicketLog {
+func IDGT(id uuid.UUID) predicate.CreateTicketLog {
 	return predicate.CreateTicketLog(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldID), id))
 	})
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.CreateTicketLog {
+func IDGTE(id uuid.UUID) predicate.CreateTicketLog {
 	return predicate.CreateTicketLog(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldID), id))
 	})
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.CreateTicketLog {
+func IDLT(id uuid.UUID) predicate.CreateTicketLog {
 	return predicate.CreateTicketLog(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldID), id))
 	})
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.CreateTicketLog {
+func IDLTE(id uuid.UUID) predicate.CreateTicketLog {
 	return predicate.CreateTicketLog(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldID), id))
-	})
-}
-
-// TicketID applies equality check predicate on the "ticket_id" field. It's identical to TicketIDEQ.
-func TicketID(v uuid.UUID) predicate.CreateTicketLog {
-	return predicate.CreateTicketLog(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTicketID), v))
 	})
 }
 
@@ -106,70 +99,6 @@ func CreatedAt(v time.Time) predicate.CreateTicketLog {
 func UpdatedAt(v time.Time) predicate.CreateTicketLog {
 	return predicate.CreateTicketLog(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldUpdatedAt), v))
-	})
-}
-
-// TicketIDEQ applies the EQ predicate on the "ticket_id" field.
-func TicketIDEQ(v uuid.UUID) predicate.CreateTicketLog {
-	return predicate.CreateTicketLog(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTicketID), v))
-	})
-}
-
-// TicketIDNEQ applies the NEQ predicate on the "ticket_id" field.
-func TicketIDNEQ(v uuid.UUID) predicate.CreateTicketLog {
-	return predicate.CreateTicketLog(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldTicketID), v))
-	})
-}
-
-// TicketIDIn applies the In predicate on the "ticket_id" field.
-func TicketIDIn(vs ...uuid.UUID) predicate.CreateTicketLog {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.CreateTicketLog(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldTicketID), v...))
-	})
-}
-
-// TicketIDNotIn applies the NotIn predicate on the "ticket_id" field.
-func TicketIDNotIn(vs ...uuid.UUID) predicate.CreateTicketLog {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.CreateTicketLog(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldTicketID), v...))
-	})
-}
-
-// TicketIDGT applies the GT predicate on the "ticket_id" field.
-func TicketIDGT(v uuid.UUID) predicate.CreateTicketLog {
-	return predicate.CreateTicketLog(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldTicketID), v))
-	})
-}
-
-// TicketIDGTE applies the GTE predicate on the "ticket_id" field.
-func TicketIDGTE(v uuid.UUID) predicate.CreateTicketLog {
-	return predicate.CreateTicketLog(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldTicketID), v))
-	})
-}
-
-// TicketIDLT applies the LT predicate on the "ticket_id" field.
-func TicketIDLT(v uuid.UUID) predicate.CreateTicketLog {
-	return predicate.CreateTicketLog(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldTicketID), v))
-	})
-}
-
-// TicketIDLTE applies the LTE predicate on the "ticket_id" field.
-func TicketIDLTE(v uuid.UUID) predicate.CreateTicketLog {
-	return predicate.CreateTicketLog(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldTicketID), v))
 	})
 }
 

@@ -18,7 +18,7 @@ type Controller interface {
 	Cancel(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ticket, error)
 }
 
-func New(repo repository.Repositoy, log *logrus.Logger) Controller {
+func New(repo repository.Repository, log *logrus.Logger) Controller {
 	return ticket{
 		repo: repo,
 		log:  log,

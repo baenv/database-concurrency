@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database-concurrency/ent"
+	createticketlogRepo "database-concurrency/internal/repository/createticketlog"
 	serviceproviderRepo "database-concurrency/internal/repository/serviceprovider"
 	ticketRepo "database-concurrency/internal/repository/ticket"
 	ticketeventRepo "database-concurrency/internal/repository/ticketevent"
@@ -23,6 +24,7 @@ type db struct {
 	serviceProvider serviceproviderRepo.Repository
 	ticket          ticketRepo.Repository
 	ticketEvent     ticketeventRepo.Repository
+	createTicketLog createticketlogRepo.Repository
 }
 
 func (d *db) Pg() *ent.Client {
@@ -47,6 +49,10 @@ func (d *db) Ticket() ticketRepo.Repository {
 
 func (d *db) TicketEvent() ticketeventRepo.Repository {
 	return d.ticketEvent
+}
+
+func (d *db) CreateTicketLog() createticketlogRepo.Repository {
+	return d.createTicketLog
 }
 
 func (d *db) Raw() *sql.DB {

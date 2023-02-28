@@ -32,3 +32,11 @@ type CancelRequest struct {
 type CancelResponse struct {
 	Ticket *ent.Ticket `json:"ticket"`
 }
+
+type GenTicketIDRequest struct {
+	UniqueID uuid.UUID `json:"unique_id"`
+}
+
+type GenTicketIDResponse struct {
+	TicketID string `json:"ticket_id"`
+}

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database-concurrency/config"
 	"database-concurrency/internal/controller"
 	"database-concurrency/internal/repository"
 
@@ -16,14 +17,19 @@ type Handler interface {
 	Reserve(ctx echo.Context) error
 	// Cancel cancel a ticket
 	Cancel(ctx echo.Context) error
+	// Create create a ticket
+	Create(ctx echo.Context) error
+
+	// CreateV2 create a ticket from a unique id
+	CreateV2(ctx echo.Context) error
 
 	// GenTicketID gen new ticket id for creating ticket, id gen API ONLY
 	GenTicketID(ctx echo.Context) error
 }
 
 // New is used to create new controller
-func New(repo repository.Repository, log *logrus.Logger) Handler {
+func New(repo repository.Repository, log *logrus.Logger, cfg config.Config) Handler {
 	return handler{
-		ctrl: controller.New(repo, log),
+		ctrl: controller.New(repo, log, cfg),
 	}
 }

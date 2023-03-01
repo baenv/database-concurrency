@@ -33,3 +33,13 @@ func (pg pg) Update(ctx context.Context, ticket *ent.Ticket) (*ent.Ticket, error
 		SetVersions(ticket.Versions).
 		Save(ctx)
 }
+
+// Update updates a ticket
+func (pg pg) Create(ctx context.Context, ticket *ent.Ticket) (*ent.Ticket, error) {
+	return pg.client.Create().
+		SetID(ticket.ID).
+		SetUserID(ticket.UserID).
+		SetStatus(ticket.Status).
+		SetVersions(ticket.Versions).
+		Save(ctx)
+}

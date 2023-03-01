@@ -32,7 +32,7 @@ func main() {
 	}
 
 	// Handler
-	hdl := handler.New(repo, log)
+	hdl := handler.New(repo, log, cfg)
 
 	// Echo instance
 	e := echo.New()

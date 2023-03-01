@@ -22,7 +22,8 @@ type Config struct {
 	REDIS_PORT string `envconfig:"REDIS_PORT"`
 
 	// SERVER
-	SERVER_PORT string `envconfig:"SERVER_PORT"`
+	SERVER_PORT       string `envconfig:"SERVER_PORT"`
+	ID_GEN_SERVER_URL string `envconfig:"ID_GEN_SERVER_URL"`
 
 	// ID_GEN_SERVER
 	ID_GEN_SERVER_PORT string `envconfig:"ID_GEN_SERVER_PORT"`

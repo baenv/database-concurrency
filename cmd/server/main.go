@@ -32,7 +32,7 @@ func main() {
 	}
 
 	// Handler
-	hdl := handler.New(repo, log)
+	hdl := handler.New(repo, log, cfg)
 
 	// Echo instance
 	e := echo.New()
@@ -52,6 +52,11 @@ func main() {
 	ticketRouter.Add(http.MethodPost, "/book", hdl.Book)
 	ticketRouter.Add(http.MethodPost, "/reserve", hdl.Reserve)
 	ticketRouter.Add(http.MethodPost, "/cancel", hdl.Cancel)
+	ticketRouter.Add(http.MethodPost, "/create", hdl.Create)
+
+	apiV2 := e.Group("/api/v2")
+	ticketRouterV2 := apiV2.Group("/tickets")
+	ticketRouterV2.Add(http.MethodPost, "/create", hdl.CreateV2)
 
 	if err := e.Start(fmt.Sprintf(":%s", cfg.SERVER_PORT)); err != nil {
 		log.WithError(err).Error("failed to start server")

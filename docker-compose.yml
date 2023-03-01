@@ -116,7 +116,7 @@ services:
       - postgres
     depends_on:
       - postgres
-    command: "id-gen-server" 
+    command: "gen" 
     restart: always
 
   queue:

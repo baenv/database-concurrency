@@ -78,3 +78,34 @@ func (h handler) Cancel(ctx echo.Context) error {
 		Ticket: result,
 	})
 }
+
+func (h handler) Create(ctx echo.Context) error {
+	result, err := h.ctrl.TicketCtrl().Create(ctx.Request().Context())
+	if err != nil {
+		return echo.NewHTTPError(500, err.Error())
+	}
+
+	return ctx.JSON(200, payload.CreateTicketResponse{
+		Ticket: result,
+	})
+}
+
+func (h handler) CreateV2(ctx echo.Context) error {
+	var req payload.CreateTicketRequest
+	if err := json.NewDecoder(ctx.Request().Body).Decode(&req); err != nil {
+		return echo.NewHTTPError(400, err.Error())
+	}
+
+	if req.UniqueID.String() == uuid.Nil.String() {
+		return echo.NewHTTPError(400, "unique_id is required")
+	}
+
+	result, err := h.ctrl.TicketCtrl().CreateV2(ctx.Request().Context(), req.UniqueID)
+	if err != nil {
+		return echo.NewHTTPError(500, err.Error())
+	}
+
+	return ctx.JSON(200, payload.CreateTicketResponse{
+		Ticket: result,
+	})
+}

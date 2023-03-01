@@ -40,3 +40,11 @@ type GenTicketIDRequest struct {
 type GenTicketIDResponse struct {
 	TicketID string `json:"ticket_id"`
 }
+
+type CreateTicketRequest struct {
+	UniqueID uuid.UUID `json:"unique_id"`
+}
+
+type CreateTicketResponse struct {
+	Ticket *ent.Ticket `json:"ticket"`
+}

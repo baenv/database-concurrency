@@ -1,21 +1,33 @@
 package ticket
 
 import (
+	"bytes"
 	"context"
+	"database-concurrency/config"
 	"database-concurrency/ent"
 	"database-concurrency/internal/controller/utils"
 	"database-concurrency/internal/repository"
 	"database-concurrency/internal/transducer"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
+	"log"
+	"net/http"
 	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	adminUserID = "9ac3a9be-b76f-11ed-afa1-0242ac120002"
+)
+
 type ticket struct {
 	repo repository.Repository
 	log  *logrus.Logger
+	cfg  config.Config
 }
 
 func (t ticket) Book(ctx context.Context, ticketID, userID uuid.UUID, locks utils.Locks) (*ent.Ticket, error) {
@@ -232,7 +244,7 @@ func (t ticket) Cancel(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ti
 	for _, effect := range output.Effects {
 		switch effect.Int() {
 		case transducer.UpdateBookingStatus.Int():
-			if err := repository.WithTx(ctx, t.repo.Raw(), t.repo.Pg(), func(txRepo repository.Repositoy) error {
+			if err := repository.WithTx(ctx, t.repo.Raw(), t.repo.Pg(), func(txRepo repository.Repository) error {
 				ticketEvent, err := txRepo.TicketEvent().Create(ctx, &ent.TicketEvent{
 					TicketID: ticketID,
 					UserID:   userID,
@@ -269,4 +281,73 @@ func (t ticket) Cancel(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ti
 		}
 	}
 	return &result, nil
+}
+
+// Create the ticket
+func (t ticket) Create(ctx context.Context) (*ent.Ticket, error) {
+	ticketID := uuid.New()
+	adminUserID, err := uuid.Parse(adminUserID)
+	if err != nil {
+		return nil, err
+	}
+
+	return t.repo.Ticket().Create(ctx, &ent.Ticket{
+		ID:       ticketID,
+		UserID:   adminUserID,
+		Status:   transducer.Idle.String(),
+		Versions: "0",
+	})
+}
+
+// CreateV2 Create the ticket from unique id
+func (t ticket) CreateV2(ctx context.Context, unique_id uuid.UUID) (*ent.Ticket, error) {
+	var ticketID uuid.UUID
+
+	// TODO: should create a separate pkg for this
+	{
+		jsonBody := []byte(fmt.Sprintf(`{"unique_id": "%v"}`, unique_id))
+		bodyReader := bytes.NewReader(jsonBody)
+
+		genTicketIDURL := fmt.Sprintf("%v/api/v1/tickets/gen", t.cfg.ID_GEN_SERVER_URL)
+		res, err := http.Post(genTicketIDURL, "application/json", bodyReader)
+		if err != nil {
+			fmt.Printf("error making http request: %s\n", err)
+			return nil, err
+		}
+
+		fmt.Printf("client: got response!\n")
+		fmt.Printf("client: status code: %d\n", res.StatusCode)
+		defer res.Body.Close()
+
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		type ticketGenResponse struct {
+			TicketID string `json:"ticket_id"`
+		}
+
+		ticketGen := ticketGenResponse{}
+		err = json.Unmarshal(body, &ticketGen)
+		if err != nil {
+			return nil, err
+		}
+		ticketID, err = uuid.Parse(ticketGen.TicketID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	adminUserID, err := uuid.Parse(adminUserID)
+	if err != nil {
+		return nil, err
+	}
+
+	return t.repo.Ticket().Create(ctx, &ent.Ticket{
+		ID:       ticketID,
+		UserID:   adminUserID,
+		Status:   transducer.Idle.String(),
+		Versions: "0",
+	})
 }

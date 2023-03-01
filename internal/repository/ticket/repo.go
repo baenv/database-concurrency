@@ -12,6 +12,7 @@ type Repository interface {
 	One(ctx context.Context, id uuid.UUID) (*ent.Ticket, error)
 	OneForUpdate(ctx context.Context, id uuid.UUID) (*ent.Ticket, error)
 	Update(ctx context.Context, ticket *ent.Ticket) (*ent.Ticket, error)
+	Create(ctx context.Context, ticket *ent.Ticket) (*ent.Ticket, error)
 }
 
 // NewPGRepo is used to generate new Ticket repository

@@ -88,10 +88,12 @@ services:
       target: runner
       args:
         - DEFAULT_PORT = ${SERVER_PORT}
+        - ID_GEN_SERVER_URL = http://id-gen-server:8085
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     links:
       - postgres
+      - id-gen-server
     depends_on:
       - postgres
     command: "server" 

@@ -1,0 +1,123 @@
+---- Requests ----
+
+Stress testing 1 target:
+- Running 100 tests at http://127.0.0.1:8083/api/v2/tickets/create, 100 at a time
+HTTP/1.1 200	609 B 	143 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	332 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	552 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	365 B 	1266 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	1366 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	1498 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	365 B 	1553 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	1708 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	1820 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	2009 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	2217 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	2217 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	2278 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	2469 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	2503 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	2515 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	2808 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	3035 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	3041 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	3316 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	3425 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	3497 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	3500 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	3640 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	3672 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	3685 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	3712 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	3719 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	3784 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	3786 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	3887 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	3941 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	3967 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4022 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4041 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4096 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4091 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4174 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4245 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4292 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4307 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4313 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4331 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4334 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4555 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4621 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4839 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4845 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4875 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4875 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4894 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4894 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4894 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4890 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4925 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4941 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+HTTP/1.1 500	435 B 	4952 ms	-> POST http://127.0.0.1:8083/api/v2/tickets/create
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+Failed to make request: Post "http://127.0.0.1:8083/api/v2/tickets/create": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+
+---- Summary ----
+
+Timing
+Mean query speed:     3440 ms
+Fastest query speed:  143 ms
+Slowest query speed:  4952 ms
+Mean RPS:             11.49 req/sec
+Total time:           4958 ms
+
+Data Transferred
+Mean query:      435 B
+Largest query:   609 B
+Smallest query:  365 B
+Total:           25 kB
+
+Response Codes
+200: 1 responses (1.75%)
+500: 56 responses (98.25%)

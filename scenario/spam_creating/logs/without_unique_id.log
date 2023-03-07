@@ -1,0 +1,123 @@
+---- Requests ----
+
+Stress testing 1 target:
+- Running 100 tests at http://127.0.0.1:8083/api/v1/tickets/create, 100 at a time
+HTTP/1.1 500	317 B 	495 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 500	317 B 	496 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 500	317 B 	495 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 500	317 B 	503 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 500	317 B 	525 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	592 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	547 B 	869 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	546 B 	1356 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1556 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1555 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1555 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1615 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1615 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1617 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1616 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1626 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1626 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1626 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1798 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	546 B 	1797 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1799 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1798 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1798 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1801 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1826 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1826 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1826 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1826 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1826 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1826 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	546 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1826 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1826 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	546 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1826 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	546 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	546 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1826 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	542 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	546 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1827 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1828 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	546 B 	1828 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1828 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1829 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1830 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1830 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1829 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1830 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1830 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1829 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1829 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1829 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1829 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1830 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1850 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1850 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1854 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1854 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1854 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1854 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1854 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	546 B 	1854 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1854 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1854 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1854 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1854 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1860 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1882 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1886 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1885 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1888 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1888 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1898 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1917 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1925 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1925 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1943 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1947 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1946 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1948 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1967 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	1986 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+HTTP/1.1 200	548 B 	2013 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/create
+
+---- Summary ----
+
+Timing
+Mean query speed:     1730 ms
+Fastest query speed:  495 ms
+Slowest query speed:  2013 ms
+Mean RPS:             49.63 req/sec
+Total time:           2014 ms
+
+Data Transferred
+Mean query:      536 B
+Largest query:   548 B
+Smallest query:  317 B
+Total:           54 kB
+
+Response Codes
+200: 95 responses (95.00%)
+500: 5 responses (5.00%)

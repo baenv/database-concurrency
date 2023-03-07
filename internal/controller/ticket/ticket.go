@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	adminUserID = "9ac3a9be-b76f-11ed-afa1-0242ac120002"
+	adminUserIDString = "9ac3a9be-b76f-11ed-afa1-0242ac120002"
 )
 
 type ticket struct {
@@ -295,7 +295,7 @@ func (t ticket) Cancel(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ti
 // Create the ticket
 func (t ticket) Create(ctx context.Context) (*ent.Ticket, error) {
 	ticketID := uuid.New()
-	adminUserID, err := uuid.Parse(adminUserID)
+	adminUserID, err := uuid.Parse(adminUserIDString)
 	if err != nil {
 		return nil, err
 	}
@@ -348,7 +348,7 @@ func (t ticket) CreateV2(ctx context.Context, unique_id uuid.UUID) (*ent.Ticket,
 		}
 	}
 
-	adminUserID, err := uuid.Parse(adminUserID)
+	adminUserID, err := uuid.Parse(adminUserIDString)
 	if err != nil {
 		return nil, err
 	}

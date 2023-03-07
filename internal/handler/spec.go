@@ -19,6 +19,10 @@ type Handler interface {
 	Cancel(ctx echo.Context) error
 	// Create create a ticket
 	Create(ctx echo.Context) error
+	// Checkin a booked ticket
+	CheckIn(ctx echo.Context) error
+	// Checkout from a checked-in ticket
+	CheckOut(ctx echo.Context) error
 
 	// CreateV2 create a ticket from a unique id
 	CreateV2(ctx echo.Context) error

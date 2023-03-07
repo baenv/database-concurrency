@@ -109,3 +109,51 @@ func (h handler) CreateV2(ctx echo.Context) error {
 		Ticket: result,
 	})
 }
+
+func (h handler) CheckIn(ctx echo.Context) error {
+	var req payload.ReserveRequest
+	if err := json.NewDecoder(ctx.Request().Body).Decode(&req); err != nil {
+		return echo.NewHTTPError(400, err.Error())
+	}
+
+	if req.TicketID.String() == uuid.Nil.String() {
+		return echo.NewHTTPError(400, "ticket_id is required")
+	}
+
+	if req.UserID.String() == uuid.Nil.String() {
+		return echo.NewHTTPError(400, "user_id is required")
+	}
+
+	result, err := h.ctrl.TicketCtrl().CheckIn(ctx.Request().Context(), req.TicketID, req.UserID)
+	if err != nil {
+		return echo.NewHTTPError(500, err.Error())
+	}
+
+	return ctx.JSON(200, payload.ReserveResponse{
+		Ticket: result,
+	})
+}
+
+func (h handler) CheckOut(ctx echo.Context) error {
+	var req payload.ReserveRequest
+	if err := json.NewDecoder(ctx.Request().Body).Decode(&req); err != nil {
+		return echo.NewHTTPError(400, err.Error())
+	}
+
+	if req.TicketID.String() == uuid.Nil.String() {
+		return echo.NewHTTPError(400, "ticket_id is required")
+	}
+
+	if req.UserID.String() == uuid.Nil.String() {
+		return echo.NewHTTPError(400, "user_id is required")
+	}
+
+	result, err := h.ctrl.TicketCtrl().CheckOut(ctx.Request().Context(), req.TicketID, req.UserID)
+	if err != nil {
+		return echo.NewHTTPError(500, err.Error())
+	}
+
+	return ctx.JSON(200, payload.ReserveResponse{
+		Ticket: result,
+	})
+}

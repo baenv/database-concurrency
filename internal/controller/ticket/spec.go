@@ -21,6 +21,10 @@ type Controller interface {
 	Create(ctx context.Context) (*ent.Ticket, error)
 	// CreateV2 Create the ticket from unique id
 	CreateV2(ctx context.Context, unique_id uuid.UUID) (*ent.Ticket, error)
+	// CheckIn the ticket
+	CheckIn(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ticket, error)
+	// CheckOut the ticket
+	CheckOut(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ticket, error)
 }
 
 func New(repo repository.Repository, log *logrus.Logger, cfg config.Config) Controller {

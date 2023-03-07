@@ -205,7 +205,11 @@ func (t ticket) Reserve(ctx context.Context, ticketID, userID uuid.UUID) (*ent.T
 				return nil, err
 			}
 		case transducer.EmailUser.Int():
-			// TODO: email user
+		// TODO: email user
+
+		default:
+			t.log.Error("not all effects have been covered")
+			return nil, errors.New("not all effects have been covered")
 		}
 	}
 	return &result, nil
@@ -278,7 +282,12 @@ func (t ticket) Cancel(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ti
 			}
 		case transducer.EmailUser.Int():
 			// TODO: email user
+
+		default:
+			t.log.Error("not all effects have been covered")
+			return nil, errors.New("not all effects have been covered")
 		}
+
 	}
 	return &result, nil
 }
@@ -350,4 +359,146 @@ func (t ticket) CreateV2(ctx context.Context, unique_id uuid.UUID) (*ent.Ticket,
 		Status:   transducer.Idle.String(),
 		Versions: "0",
 	})
+}
+
+// CheckIn a booked ticket
+func (t ticket) CheckIn(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ticket, error) {
+	var result ent.Ticket
+	ticket, err := t.repo.Ticket().One(ctx, ticketID)
+
+	if err != nil {
+		t.log.Error("failed to get ticket", err)
+		return nil, err
+	}
+
+	if ticket.Status != transducer.Idle.String() {
+		t.log.Error("ticket is not idle")
+		return nil, errors.New("ticket is not idle")
+	}
+
+	config, ticketTransducer := transducer.NewBookingMachine(ticket.Status)
+	output := ticketTransducer.Transduce(config, transducer.CheckIn)
+
+	resultState := output.GetState().String()
+	if resultState == transducer.Invalid.String() {
+		err := errors.New("invalid ticket state")
+		t.log.Error("failed to get ticket", err)
+		return nil, err
+	}
+
+	for _, effect := range output.Effects {
+		switch effect.Int() {
+		case transducer.UpdateBookingStatus.Int():
+			if err := repository.WithTx(ctx, t.repo.Raw(), t.repo.Pg(), func(txRepo repository.Repository) error {
+				ticketEvent, err := txRepo.TicketEvent().Create(ctx, &ent.TicketEvent{
+					TicketID: ticketID,
+					UserID:   userID,
+					Type:     transducer.CheckIn.String(),
+				})
+				if err != nil {
+					t.log.Error("failed to create ticket event", err)
+					return err
+				}
+
+				// ticket update
+				ticket.Status = transducer.CheckIn.String()
+				ticket.LastEventID = ticketEvent.ID
+				version, err := strconv.ParseInt(ticket.Versions, 16, 0)
+				if err != nil {
+					return err
+				}
+
+				ticket.Versions = strconv.FormatInt(version+1, 16)
+				ticket, err = txRepo.Ticket().Update(ctx, ticket)
+				if err != nil {
+					t.log.Error("failed to update ticket", err)
+					return err
+				}
+
+				ticket.Edges.LastEvent = ticketEvent
+				result = *ticket
+				return nil
+			}); err != nil {
+				return nil, err
+			}
+		case transducer.EmailUser.Int():
+		// TODO: email user
+
+		default:
+			t.log.Error("not all effects have been covered")
+			return nil, errors.New("not all effects have been covered")
+		}
+	}
+	return &result, nil
+}
+
+// CheckOut a booked ticket
+func (t ticket) CheckOut(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ticket, error) {
+	var result ent.Ticket
+	ticket, err := t.repo.Ticket().One(ctx, ticketID)
+
+	if err != nil {
+		t.log.Error("failed to get ticket", err)
+		return nil, err
+	}
+
+	if ticket.Status != transducer.Idle.String() {
+		t.log.Error("ticket is not idle")
+		return nil, errors.New("ticket is not idle")
+	}
+
+	config, ticketTransducer := transducer.NewBookingMachine(ticket.Status)
+	output := ticketTransducer.Transduce(config, transducer.CheckOut)
+
+	resultState := output.GetState().String()
+	if resultState == transducer.Invalid.String() {
+		err := errors.New("invalid ticket state")
+		t.log.Error("failed to get ticket", err)
+		return nil, err
+	}
+
+	for _, effect := range output.Effects {
+		switch effect.Int() {
+		case transducer.UpdateBookingStatus.Int():
+			if err := repository.WithTx(ctx, t.repo.Raw(), t.repo.Pg(), func(txRepo repository.Repository) error {
+				ticketEvent, err := txRepo.TicketEvent().Create(ctx, &ent.TicketEvent{
+					TicketID: ticketID,
+					UserID:   userID,
+					Type:     transducer.CheckOut.String(),
+				})
+				if err != nil {
+					t.log.Error("failed to create ticket event", err)
+					return err
+				}
+
+				// ticket update
+				ticket.Status = transducer.CheckOut.String()
+				ticket.LastEventID = ticketEvent.ID
+				version, err := strconv.ParseInt(ticket.Versions, 16, 0)
+				if err != nil {
+					return err
+				}
+
+				ticket.Versions = strconv.FormatInt(version+1, 16)
+				ticket, err = txRepo.Ticket().Update(ctx, ticket)
+				if err != nil {
+					t.log.Error("failed to update ticket", err)
+					return err
+				}
+
+				ticket.Edges.LastEvent = ticketEvent
+				result = *ticket
+				return nil
+			}); err != nil {
+				return nil, err
+			}
+		case transducer.EmailUser.Int():
+		// TODO: email user
+
+		default:
+			t.log.Error("not all effects have been covered")
+			return nil, errors.New("not all effects have been covered")
+		}
+	}
+	return &result, nil
 }

@@ -205,7 +205,11 @@ func (t ticket) Reserve(ctx context.Context, ticketID, userID uuid.UUID) (*ent.T
 				return nil, err
 			}
 		case transducer.EmailUser.Int():
-			// TODO: email user
+		// TODO: email user
+
+		default:
+			t.log.Error("not all effects have been covered")
+			return nil, errors.New("not all effects have been covered")
 		}
 	}
 	return &result, nil
@@ -278,7 +282,12 @@ func (t ticket) Cancel(ctx context.Context, ticketID, userID uuid.UUID) (*ent.Ti
 			}
 		case transducer.EmailUser.Int():
 			// TODO: email user
+
+		default:
+			t.log.Error("not all effects have been covered")
+			return nil, errors.New("not all effects have been covered")
 		}
+
 	}
 	return &result, nil
 }

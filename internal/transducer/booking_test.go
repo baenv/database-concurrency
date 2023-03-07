@@ -53,3 +53,12 @@ func TestBookingGetFloydWarshallPaths(t *testing.T) {
 		}
 	}
 }
+
+func TestBookingGetShortestPaths(t *testing.T) {
+	characterConfig := CreateConfig().SetState(Idle)
+	characterTransducer := NewBookingTransducer(characterConfig)
+
+	paths := characterTransducer.GetShortestPaths(Idle)
+
+	fmt.Println(paths)
+}

@@ -193,6 +193,74 @@ func (t *Transducer) GetFloydWarshallPaths() ([][]graph.Vertex, map[graph.Vertex
 	return paths, edges
 }
 
+func (t *Transducer) GetShortestPaths(root State) map[State][]StateInputTuple {
+	stateMap := map[State][]StateInputTuple{}
+
+	stateVisited := map[State]bool{}
+	stateQueue := graph.NewRingBuffer()
+	pathQueue := graph.NewRingBuffer()
+
+	if _, ok := stateVisited[root]; !ok {
+		stateVisited[root] = true
+		stateQueue.Add(root)
+	}
+
+	// exhaust queue for visited states
+	for stateQueue.Length() > 0 {
+		var queuedState State
+		v := stateQueue.Remove()
+
+		switch poppedState := v.(type) {
+		case State:
+			queuedState = poppedState
+		}
+
+		if _, ok := stateMap[queuedState]; !ok {
+			stateMap[queuedState] = []StateInputTuple{}
+		}
+
+		for tuple, f := range t.TransitionTable {
+			state := tuple.State
+			input := tuple.Input
+			nextState := f().GetState()
+
+			if _, ok := stateVisited[nextState]; !ok {
+				stateVisited[nextState] = true
+				stateQueue.Add(nextState)
+			}
+
+			if nextState == queuedState {
+				pathQueue.Add(state)
+				stateMap[queuedState] = append(stateMap[queuedState], StateInputTuple{State: state, Input: input})
+			}
+		}
+
+		// exhaust queue for visited sub-states
+		for pathQueue.Length() > 0 {
+			var queuedPath State
+			u := pathQueue.Remove()
+
+			switch poppedPath := u.(type) {
+			case State:
+				queuedPath = poppedPath
+			}
+
+			for tuple, f := range t.TransitionTable {
+				state := tuple.State
+				input := tuple.Input
+				nextState := f().GetState()
+
+				if nextState == queuedPath {
+					pathQueue.Add(state)
+					stateMap[queuedState] = append(stateMap[queuedState], StateInputTuple{State: state, Input: input})
+				}
+			}
+		}
+	}
+
+	return stateMap
+}
+
 type ChildTransducer map[string]Transducer
 
 func MergeChildOutputs(outerOutputs *Outputs, innerOutputs *Outputs, childName string) *Outputs {

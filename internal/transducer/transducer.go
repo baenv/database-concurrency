@@ -229,7 +229,7 @@ func (t *Transducer) GetShortestPaths(root State) map[State][]StateInputTuple {
 				stateQueue.Add(nextState)
 			}
 
-			if nextState == queuedState {
+			if nextState == queuedState && nextState != root {
 				pathQueue.Add(state)
 				stateMap[queuedState] = append(stateMap[queuedState], StateInputTuple{State: state, Input: input})
 			}
@@ -250,7 +250,7 @@ func (t *Transducer) GetShortestPaths(root State) map[State][]StateInputTuple {
 				input := tuple.Input
 				nextState := f().GetState()
 
-				if nextState == queuedPath {
+				if nextState == queuedPath && nextState != root {
 					pathQueue.Add(state)
 					stateMap[queuedState] = append(stateMap[queuedState], StateInputTuple{State: state, Input: input})
 				}

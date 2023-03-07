@@ -145,11 +145,11 @@ func (t *Transducer) ToDiGraph() string {
 	return digraph
 }
 
-func (t *Transducer) GetShortestPaths() ([][]graph.Vertex, map[graph.Vertex]map[graph.Vertex]Input) {
+func (t *Transducer) GetFloydWarshallPaths() ([][]graph.Vertex, map[graph.Vertex]map[graph.Vertex]Input) {
 	vertexes := []graph.Vertex{}
 	edges := make(map[graph.Vertex]map[graph.Vertex]Input)
 	edgeWeights := make(map[graph.Vertex]map[graph.Vertex]float64)
-	weight := 0.0
+	weight := len(t.TransitionTable)
 
 	for stateInputTuple, f := range t.TransitionTable {
 		state := graph.Vertex(stateInputTuple.State)
@@ -168,13 +168,13 @@ func (t *Transducer) GetShortestPaths() ([][]graph.Vertex, map[graph.Vertex]map[
 		_, exists = edgeWeights[state]
 		if !exists {
 			edgeWeights[state] = make(map[graph.Vertex]float64)
-			weight += 1
+			weight -= 1
 		}
 		_, exists = edgeWeights[state][nextState]
 		if !exists {
-			weight += 1
+			weight -= 1
 		}
-		edgeWeights[state][nextState] = weight
+		edgeWeights[state][nextState] = float64(weight)
 	}
 
 	g := graph.NewGraph(vertexes, edgeWeights)

@@ -53,6 +53,8 @@ func main() {
 	ticketRouter.Add(http.MethodPost, "/reserve", hdl.Reserve)
 	ticketRouter.Add(http.MethodPost, "/cancel", hdl.Cancel)
 	ticketRouter.Add(http.MethodPost, "/create", hdl.Create)
+	ticketRouter.Add(http.MethodPost, "/checkin", hdl.CheckIn)
+	ticketRouter.Add(http.MethodPost, "/checkout", hdl.CheckOut)
 
 	apiV2 := e.Group("/api/v2")
 	ticketRouterV2 := apiV2.Group("/tickets")

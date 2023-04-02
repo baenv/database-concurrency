@@ -121,6 +121,27 @@ services:
     command: "gen" 
     restart: always
 
+  consumer:
+    platform: linux/amd64
+    container_name: consumer
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+    image: consumer
+    build:
+      dockerfile: Dockerfile.Consumer
+      context: .
+      target: runner
+      args:
+        - REDIS_HOST = ${REDIS_HOST}
+        - REDIS_PORT = ${REDIS_PORT}
+    links:
+      - postgres
+    depends_on:
+      - postgres
+    command: "consumer" 
+    restart: always
+
   queue:
     platform: linux/amd64
     container_name: queue

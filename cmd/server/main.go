@@ -1,12 +1,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
 	"database-concurrency/config"
 	"database-concurrency/internal/handler"
 	"database-concurrency/internal/repository"
+	"database-concurrency/internal/stream"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -31,8 +33,18 @@ func main() {
 		return
 	}
 
+	redis, err := stream.InitRedisClient(cfg)
+	if err != nil {
+		log.WithError(err).Error("failed to init redis")
+		return
+	}
+	_, err = redis.Ping(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// Handler
-	hdl := handler.New(repo, log, cfg)
+	hdl := handler.New(repo, redis, log, cfg)
 
 	// Echo instance
 	e := echo.New()
@@ -59,6 +71,8 @@ func main() {
 	apiV2 := e.Group("/api/v2")
 	ticketRouterV2 := apiV2.Group("/tickets")
 	ticketRouterV2.Add(http.MethodPost, "/create", hdl.CreateV2)
+	ticketRouterV2.Add(http.MethodPost, "/reserve", hdl.ReserveV2)
+	// ticketRouterV2.Add(http.MethodPost, "/reserve-wait-response", hdl.ReserveV2WaitResponse)
 
 	if err := e.Start(fmt.Sprintf(":%s", cfg.SERVER_PORT)); err != nil {
 		log.WithError(err).Error("failed to start server")

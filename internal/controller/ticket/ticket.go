@@ -266,11 +266,13 @@ func (t ticket) ConsumeReserve(ctx context.Context, event ent.TicketEvent) {
 	ticket, err := t.repo.Ticket().One(ctx, event.TicketID)
 
 	if err != nil {
-		t.log.Error("failed to get ticket", err)
+		t.log.Errorf("[%s]: ticket not found", event.TicketID)
+		return
 	}
 
 	if ticket.Status != transducer.Idle.String() {
-		t.log.Error("ticket is not idle")
+		t.log.Errorf("[%s]: ticket not idle", event.TicketID)
+		return
 	}
 
 	config, ticketTransducer := transducer.NewBookingMachine(ticket.Status)
@@ -279,7 +281,8 @@ func (t ticket) ConsumeReserve(ctx context.Context, event ent.TicketEvent) {
 	resultState := output.GetState().String()
 	if resultState == transducer.Invalid.String() {
 		err := errors.New("invalid ticket state")
-		t.log.Error("failed to get ticket", err)
+		t.log.Errorf("[%s]: %v", event.TicketID, err)
+		return
 	}
 
 	for _, effect := range output.Effects {
@@ -309,7 +312,8 @@ func (t ticket) ConsumeReserve(ctx context.Context, event ent.TicketEvent) {
 
 				return nil
 			}); err != nil {
-				t.log.Error(err)
+				t.log.Errorf("[%s]: %v", event.TicketID, err)
+				return
 			}
 		case transducer.EmailUser.Int():
 		// TODO: email user

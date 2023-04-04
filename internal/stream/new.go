@@ -22,7 +22,7 @@ type redisWapper struct {
 // InitRedisClient get a redis wrapper instance
 func InitRedisClient(cfg config.Config) (RedisWrapper, error) {
 	c := redis.NewClient(&redis.Options{
-		Addr:       fmt.Sprintf("%v:%v", "127.0.0.1", "6379"),
+		Addr:       fmt.Sprintf("%v:%v", cfg.REDIS_HOST, cfg.REDIS_PORT),
 		MaxRetries: 3,
 	})
 

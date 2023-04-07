@@ -1,0 +1,14 @@
+FROM golang:1.18 as builder
+RUN mkdir /build
+WORKDIR /build
+COPY . .
+
+RUN apt-get update
+RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go install -mod=mod -v ./...
+RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -mod=mod -o /go/bin/consumer ./cmd/consumer/...
+
+FROM alpine:3.10 as runner
+RUN apk --no-cache add ca-certificates
+WORKDIR /
+
+COPY --from=builder /go/bin/* /usr/bin/

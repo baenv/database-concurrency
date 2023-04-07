@@ -7,6 +7,7 @@ import (
 	"database-concurrency/ent"
 	"database-concurrency/internal/controller/utils"
 	"database-concurrency/internal/repository"
+	"database-concurrency/internal/stream"
 	"database-concurrency/internal/transducer"
 	"encoding/json"
 	"errors"
@@ -28,6 +29,8 @@ type ticket struct {
 	repo repository.Repository
 	log  *logrus.Logger
 	cfg  config.Config
+
+	reserveStream stream.RedisStreamWrapper
 }
 
 func (t ticket) Book(ctx context.Context, ticketID, userID uuid.UUID, locks utils.Locks) (*ent.Ticket, error) {
@@ -213,6 +216,113 @@ func (t ticket) Reserve(ctx context.Context, ticketID, userID uuid.UUID) (*ent.T
 		}
 	}
 	return &result, nil
+}
+
+// ReserveV2 publish an event to reserve a ticket
+func (t ticket) ReserveV2(ctx context.Context, ticketID, userID uuid.UUID) error {
+	ticket, err := t.repo.Ticket().One(ctx, ticketID)
+
+	if err != nil {
+		t.log.Error("failed to get ticket", err)
+		return err
+	}
+
+	if ticket.Status != transducer.Idle.String() {
+		t.log.Error("ticket is not idle")
+		return errors.New("ticket is not idle")
+	}
+
+	config, ticketTransducer := transducer.NewBookingMachine(ticket.Status)
+	output := ticketTransducer.Transduce(config, transducer.Reserve)
+
+	resultState := output.GetState().String()
+	if resultState == transducer.Invalid.String() {
+		err := errors.New("invalid ticket state")
+		t.log.Error("failed to get ticket", err)
+		return err
+	}
+
+	ticketEvent := ent.TicketEvent{
+		ID:       uuid.New(),
+		TicketID: ticketID,
+		UserID:   userID,
+		Type:     transducer.Reserve.String(),
+	}
+	msg, err := json.Marshal(ticketEvent)
+	if err != nil {
+		return err
+	}
+
+	res, err := t.reserveStream.Publish(ctx, msg)
+	if err != nil {
+		return err
+	}
+	t.log.Infof("published, %s", res)
+	return nil
+}
+
+// ConsumeReserve consume an event to reserve a ticket
+func (t ticket) ConsumeReserve(ctx context.Context, event ent.TicketEvent) {
+	ticket, err := t.repo.Ticket().One(ctx, event.TicketID)
+
+	if err != nil {
+		t.log.Errorf("[%s]: ticket not found", event.TicketID)
+		return
+	}
+
+	if ticket.Status != transducer.Idle.String() {
+		t.log.Errorf("[%s]: ticket not idle", event.TicketID)
+		return
+	}
+
+	config, ticketTransducer := transducer.NewBookingMachine(ticket.Status)
+	output := ticketTransducer.Transduce(config, transducer.Reserve)
+
+	resultState := output.GetState().String()
+	if resultState == transducer.Invalid.String() {
+		err := errors.New("invalid ticket state")
+		t.log.Errorf("[%s]: %v", event.TicketID, err)
+		return
+	}
+
+	for _, effect := range output.Effects {
+		switch effect.Int() {
+		case transducer.UpdateBookingStatus.Int():
+			if err := repository.WithTx(ctx, t.repo.Raw(), t.repo.Pg(), func(txRepo repository.Repository) error {
+				ticketEvent, err := txRepo.TicketEvent().Create(ctx, &event)
+				if err != nil {
+					t.log.Error("failed to create ticket event", err)
+					return err
+				}
+
+				// ticket update
+				ticket.Status = transducer.Reserved.String()
+				ticket.LastEventID = ticketEvent.ID
+				version, err := strconv.ParseInt(ticket.Versions, 16, 0)
+				if err != nil {
+					return err
+				}
+
+				ticket.Versions = strconv.FormatInt(version+1, 16)
+				ticket, err = txRepo.Ticket().Update(ctx, ticket)
+				if err != nil {
+					t.log.Error("failed to update ticket", err)
+					return err
+				}
+
+				return nil
+			}); err != nil {
+				t.log.Errorf("[%s]: %v", event.TicketID, err)
+				return
+			}
+		case transducer.EmailUser.Int():
+		// TODO: email user
+
+		default:
+			t.log.Error("not all effects have been covered")
+		}
+	}
+	t.log.Printf("finish reserve ticket_id: %v", ticket.ID)
 }
 
 // Cancel the ticket

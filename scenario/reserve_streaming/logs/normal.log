@@ -1,0 +1,123 @@
+---- Requests ----
+
+Stress testing 1 target:
+- Running 100 tests at http://127.0.0.1:8083/api/v1/tickets/reserve, 100 at a time
+HTTP/1.1 200	959 B 	174 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	221 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	252 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	252 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	262 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	334 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	334 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 200	960 B 	336 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	378 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	401 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	418 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	466 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	468 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	475 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	591 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	612 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	656 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	681 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	701 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	714 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	734 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	739 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	745 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	746 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	750 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	767 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	769 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	778 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	783 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	786 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	788 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	814 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	817 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	817 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	817 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	818 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	820 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	835 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	835 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	837 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	838 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	839 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	850 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	857 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	857 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	862 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	882 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	888 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	889 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	902 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	902 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	901 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	916 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	922 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	928 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	948 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	963 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	966 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	966 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	970 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	981 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	985 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	991 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	998 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1008 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1031 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1032 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1033 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1038 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1045 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1046 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1055 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1069 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1075 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1075 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1076 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1080 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1096 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1105 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1130 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1131 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1132 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1133 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1137 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1138 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1148 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1150 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1166 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1170 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1185 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1217 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1236 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1272 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1283 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1300 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1303 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1322 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1324 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1333 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+HTTP/1.1 500	418 B 	1344 ms	-> POST http://127.0.0.1:8083/api/v1/tickets/reserve
+
+---- Summary ----
+
+Timing
+Mean query speed:     879 ms
+Fastest query speed:  174 ms
+Slowest query speed:  1344 ms
+Mean RPS:             74.31 req/sec
+Total time:           1345 ms
+
+Data Transferred
+Mean query:      428 B
+Largest query:   960 B
+Smallest query:  418 B
+Total:           43 kB
+
+Response Codes
+200: 2 responses (2.00%)
+500: 98 responses (98.00%)

@@ -25,6 +25,14 @@ type Config struct {
 	SERVER_PORT       string `envconfig:"SERVER_PORT"`
 	ID_GEN_SERVER_URL string `envconfig:"ID_GEN_SERVER_URL"`
 
+	// STREAMING MASTER
+	MASTER_PORT string `envconfig:"MASTER_PORT"`
+
+	// STREAMING CONSUMER
+	CONSUMER_NAME string `envconfig:"CONSUMER_NAME"`
+	CONSUMER_PORT string `envconfig:"CONSUMER_PORT"`
+	MASTER_URL    string `envconfig:"MASTER_URL" required:"true"`
+
 	// ID_GEN_SERVER
 	ID_GEN_SERVER_PORT string `envconfig:"ID_GEN_SERVER_PORT"`
 }

@@ -6,8 +6,8 @@ import (
 	"database-concurrency/config"
 	"database-concurrency/ent"
 	"database-concurrency/internal/controller/utils"
+	"database-concurrency/internal/redis"
 	"database-concurrency/internal/repository"
-	"database-concurrency/internal/stream"
 	"database-concurrency/internal/transducer"
 	"encoding/json"
 	"errors"
@@ -30,7 +30,7 @@ type ticket struct {
 	log  *logrus.Logger
 	cfg  config.Config
 
-	reserveStream stream.RedisStreamWrapper
+	reserveStream redis.RedisStreamWrapper
 }
 
 func (t ticket) Book(ctx context.Context, ticketID, userID uuid.UUID, locks utils.Locks) (*ent.Ticket, error) {

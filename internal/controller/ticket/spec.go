@@ -5,8 +5,8 @@ import (
 	"database-concurrency/config"
 	"database-concurrency/ent"
 	"database-concurrency/internal/controller/utils"
+	"database-concurrency/internal/redis"
 	"database-concurrency/internal/repository"
-	"database-concurrency/internal/stream"
 
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -33,7 +33,7 @@ type Controller interface {
 	ConsumeReserve(ctx context.Context, event ent.TicketEvent)
 }
 
-func New(repo repository.Repository, redis stream.RedisWrapper, log *logrus.Logger, cfg config.Config) Controller {
+func New(repo repository.Repository, redis redis.RedisWrapper, log *logrus.Logger, cfg config.Config) Controller {
 	t := ticket{
 		repo: repo,
 		log:  log,

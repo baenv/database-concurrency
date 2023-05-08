@@ -3,8 +3,8 @@ package handler
 import (
 	"database-concurrency/config"
 	"database-concurrency/internal/controller"
+	"database-concurrency/internal/redis"
 	"database-concurrency/internal/repository"
-	"database-concurrency/internal/stream"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
@@ -35,7 +35,7 @@ type Handler interface {
 }
 
 // New is used to create new controller
-func New(repo repository.Repository, redis stream.RedisWrapper, log *logrus.Logger, cfg config.Config) Handler {
+func New(repo repository.Repository, redis redis.RedisWrapper, log *logrus.Logger, cfg config.Config) Handler {
 	return handler{
 		ctrl: controller.New(repo, redis, log, cfg),
 	}

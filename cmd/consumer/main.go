@@ -8,8 +8,8 @@ import (
 	"database-concurrency/config"
 	"database-concurrency/ent"
 	"database-concurrency/internal/controller"
+	"database-concurrency/internal/redis"
 	"database-concurrency/internal/repository"
-	"database-concurrency/internal/stream"
 
 	"github.com/labstack/echo/v4"
 	_ "github.com/lib/pq"
@@ -33,7 +33,7 @@ func main() {
 		return
 	}
 
-	redis, err := stream.InitRedisClient(cfg)
+	redis, err := redis.InitRedisClient(cfg)
 	if err != nil {
 		log.WithError(err).Error("failed to init redis")
 		return

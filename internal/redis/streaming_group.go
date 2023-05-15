@@ -2,13 +2,15 @@ package redis
 
 import (
 	"context"
+	"time"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 )
 
 // RedisStreamWrapper interface to handle streams
 type RedisStreamGroupConsumerWrapper interface {
 	Claim(ctx context.Context, stream, eventID string) error
+	AutoClaim(ctx context.Context, stream string, minIdleTime time.Duration) error
 	Read(ctx context.Context, count int64, streams ...string) ([]redis.XMessage, error)
 	Acknowledge(ctx context.Context, stream, eventID string) error
 }
@@ -42,10 +44,20 @@ func (s redisStreamConsumerWrapper) Claim(ctx context.Context, stream, eventID s
 		Stream:   stream,
 		Group:    s.group,
 		Consumer: s.consumer,
-		MinIdle:  0,
 		Messages: []string{eventID},
-	}).Result()
+	}).Result() // Using this option means the retry counter is not incremented.
 	return err
+}
+
+func (s redisStreamConsumerWrapper) AutoClaim(ctx context.Context, stream string, minIdleTime time.Duration) ([]redis.XMessage, error) {
+	messages, _, err := s.c.XAutoClaim(ctx, &redis.XAutoClaimArgs{
+		Stream:   stream,
+		Group:    s.group,
+		Consumer: s.consumer,
+		MinIdle:  minIdleTime,
+		Start:    "0-0",
+	}).Result()
+	return messages, err
 }
 
 func (s redisStreamConsumerWrapper) Acknowledge(ctx context.Context, stream, eventID string) error {

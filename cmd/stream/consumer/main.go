@@ -32,6 +32,7 @@ func main() {
 
 	data, _ := json.Marshal(payload.ConsumerRegisterRequest{
 		ConsumerName: cfg.CONSUMER_NAME,
+		HealthURL:    fmt.Sprintf("http://localhost:%v/healthz", cfg.CONSUMER_PORT),
 	})
 	bodyReader := bytes.NewReader(data)
 
@@ -67,7 +68,14 @@ func main() {
 		consumer := redis.CreateConsumer(ctx, "concurrency_stream", "concurrency_stream_group", cfg.CONSUMER_NAME)
 
 		go func() {
+			mockFailureCount := 2
 			for {
+				if mockFailureCount == 0 {
+					log.Infoln("mock failure, shutting down consumer")
+					time.Sleep(time.Minute)
+					log.Fatal("consumer disconnected")
+				}
+
 				messages, err := consumer.Read(ctx, 1, "ticket_stream", "0")
 				if err != nil {
 					log.Fatal(err)
@@ -78,7 +86,7 @@ func main() {
 				}
 
 				data := []byte(messages[0].Values["data"].(string))
-				eventID := messages[0].ID
+				messageID := messages[0].ID
 
 				var event ent.TicketEvent
 
@@ -87,15 +95,16 @@ func main() {
 					log.Fatal("can not parse ticket event")
 					return
 				}
-				log.Infof("processing eventID: %s,ticketID: %s", eventID, event.TicketID)
+				log.Infof("processing eventID: %s, ticketID: %s", messageID, event.TicketID)
 
 				// TODO: handling of ticket event
+				time.Sleep(time.Minute)
 
-				consumer.Acknowledge(ctx, "ticket_stream", eventID)
+				consumer.Acknowledge(ctx, "ticket_stream", messageID)
 
 				data, _ = json.Marshal(payload.TicketAcknowledgeRequest{
-					TicketID: event.TicketID.String(),
-					EventID:  eventID,
+					TicketID:  event.TicketID.String(),
+					MessageID: messageID,
 				})
 				bodyReader := bytes.NewReader(data)
 
@@ -105,6 +114,8 @@ func main() {
 					log.Fatal(err)
 					return
 				}
+
+				mockFailureCount--
 			}
 		}()
 	}

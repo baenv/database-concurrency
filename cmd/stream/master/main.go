@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"math/rand"
@@ -14,15 +15,22 @@ import (
 	"database-concurrency/internal/handler/payload"
 	"database-concurrency/internal/redis"
 
+	redislib "github.com/redis/go-redis/v9"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 )
 
-type ticket struct {
+type ticketData struct {
 	ConsumerName string   `json:"consumer_name"`
-	Events       []string `json:"event_ids"`
+	Events       []string `json:"message_ids"`
+}
+
+type consumerData struct {
+	HealthURL string   `json:"health_url"`
+	TicketIDs []string `json:"ticket_ids"`
 }
 
 func main() {
@@ -50,11 +58,11 @@ func main() {
 
 	// TODO: should move to a master handler pkg
 	{
-		masterConsumer := redis.CreateConsumer(ctx, "ticket_stream", "concurrency_stream_group", "master")
+		masterConsumer := redis.CreateConsumer(ctx, cfg.STREAM_NAME, cfg.STREAM_GROUP_NAME, cfg.STREAM_GROUP_NAME)
 
 		// tickets, consumers used as traffic control info to redirect a message to a consumer that currently processing the same ticket_id
-		var tickets *map[string]ticket
-		var consumers *map[string][]string
+		var tickets *map[string]ticketData
+		var consumers *map[string]consumerData
 
 		// For failure recovery, tickets, consumers are created as backup, saved in Redis
 		ticketTable := redis.CreateTable("tickets")
@@ -86,6 +94,16 @@ func main() {
 			}
 		}
 
+		service := masterService{
+			redis: redis,
+
+			tickets:   tickets,
+			consumers: consumers,
+
+			ticketTable:   ticketTable,
+			consumerTable: consumerTable,
+		}
+
 		// process ticket stream
 		go func() {
 			for {
@@ -96,7 +114,7 @@ func main() {
 				}
 
 				// with ">", the master consumer always the first to read the incoming message and able to "XCLAIM" for other consumers
-				messages, err := masterConsumer.Read(ctx, 1, "ticket_stream", ">")
+				messages, err := masterConsumer.Read(ctx, 1, cfg.STREAM_NAME, ">")
 				if err != nil {
 					log.Fatal("fail to read ticket stream")
 					return
@@ -107,69 +125,21 @@ func main() {
 					continue
 				}
 
-				data := []byte(messages[0].Values["data"].(string))
-				eventID := messages[0].ID
-
-				var event ent.TicketEvent
-
-				err = json.Unmarshal(data, &event)
-				if err != nil {
-					log.Fatal("can not parse ticket event")
-					return
-				}
-
-				ticketID := event.TicketID.String()
-
-				var consumerName string
-				var consumerProcessingTicketIDs []string
-				var consumerProcessingEventIDs []string
-
-				// check if a ticket_ID is being process by some consumers. If not then choose a random consumer
-				{
-					t, isExist := (*tickets)[ticketID]
-					if isExist {
-						consumerName = t.ConsumerName
-						consumerProcessingTicketIDs = []string{ticketID}
-						consumerProcessingEventIDs = append(t.Events, eventID)
-					} else {
-						magicNumber := rand.Intn(len(*consumers))
-						count := 0
-						for key, value := range *consumers {
-							if count == magicNumber {
-								consumerName = key
-								consumerProcessingTicketIDs = append(value, ticketID)
-								consumerProcessingEventIDs = []string{eventID}
-								break
-							}
-							count++
-						}
-					}
-				}
-
-				consumer := redis.CreateConsumer(ctx, "ticket_stream", "concurrency_stream_group", consumerName)
-				err = consumer.Claim(ctx, "ticket_stream", eventID)
-				if err != nil {
-					log.Fatal("fail to claim event from ticket_stream, ", err)
-					return
-				}
-
-				{
-					(*tickets)[ticketID] = ticket{
-						ConsumerName: consumerName,
-						Events:       consumerProcessingEventIDs,
-					}
-					(*consumers)[consumerName] = consumerProcessingTicketIDs
-
-					c, _ := json.Marshal(consumers)
-					err = consumerTable.SetValue(ctx, c)
+				for _, message := range messages {
+					// check if a ticket_ID is being process by some consumers. If not then choose a random consumer
+					err := service.delegateMessage(ctx, message, "")
 					if err != nil {
-						log.Fatal("can not save consumers table")
+						log.Fatal(err)
 					}
-					t, _ := json.Marshal(tickets)
-					err = ticketTable.SetValue(ctx, t)
-					if err != nil {
-						log.Fatal("can not save tickets table")
-					}
+				}
+			}
+		}()
+
+		go func() {
+			for {
+				hasOnlineConsumer := service.recoverDownConsumers(ctx)
+				if hasOnlineConsumer {
+					service.recoverIdleEvent(ctx)
 				}
 			}
 		}()
@@ -189,6 +159,9 @@ func main() {
 		handler := masterHandler{
 			consumers: consumers,
 			tickets:   tickets,
+
+			consumerTable: consumerTable,
+			ticketTable:   ticketTable,
 		}
 
 		consumerRouter := apiV1.Group("/consumers")
@@ -211,8 +184,8 @@ func healthz(c echo.Context) error {
 
 // TODO: should move this to a handler pkg
 type masterHandler struct {
-	tickets   *map[string]ticket
-	consumers *map[string][]string
+	tickets   *map[string]ticketData
+	consumers *map[string]consumerData
 
 	ticketTable   redis.RedisTableWrapper
 	consumerTable redis.RedisTableWrapper
@@ -225,9 +198,16 @@ func (h masterHandler) register(ctx echo.Context) error {
 		return echo.NewHTTPError(400, err.Error())
 	}
 
-	_, ok := (*h.consumers)[req.ConsumerName]
+	existConsumer, ok := (*h.consumers)[req.ConsumerName]
 	if !ok {
-		(*h.consumers)[req.ConsumerName] = []string{}
+		(*h.consumers)[req.ConsumerName] = consumerData{
+			HealthURL: req.HealthURL,
+		}
+	} else {
+		(*h.consumers)[req.ConsumerName] = consumerData{
+			HealthURL: req.HealthURL,
+			TicketIDs: existConsumer.TicketIDs,
+		}
 	}
 
 	redisCtx := context.Background()
@@ -249,20 +229,23 @@ func (h masterHandler) acknowledge(ctx echo.Context) error {
 	}
 
 	t := (*h.tickets)[req.TicketID]
-	eventIDs := []string{}
-	for _, eventID := range t.Events {
-		if eventID != req.EventID {
-			eventIDs = append(eventIDs, eventID)
+	messageIDs := []string{}
+	for _, messageID := range t.Events {
+		if messageID != req.MessageID {
+			messageIDs = append(messageIDs, messageID)
 		}
 	}
 
-	if len(eventIDs) == 0 {
+	if len(messageIDs) == 0 {
 		delete((*h.tickets), req.TicketID)
-		(*h.consumers)[t.ConsumerName] = []string{}
+		(*h.consumers)[t.ConsumerName] = consumerData{
+			HealthURL: (*h.consumers)[t.ConsumerName].HealthURL,
+			TicketIDs: []string{},
+		}
 	} else {
-		(*h.tickets)[req.TicketID] = ticket{
+		(*h.tickets)[req.TicketID] = ticketData{
 			ConsumerName: t.ConsumerName,
-			Events:       eventIDs,
+			Events:       messageIDs,
 		}
 	}
 
@@ -280,4 +263,213 @@ func (h masterHandler) acknowledge(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(200, "OK")
+}
+
+type masterService struct {
+	cfg config.Config
+
+	redis redis.RedisWrapper
+
+	tickets   *map[string]ticketData
+	consumers *map[string]consumerData
+
+	ticketTable   redis.RedisTableWrapper
+	consumerTable redis.RedisTableWrapper
+}
+
+func (s masterService) delegateMessage(ctx context.Context, message redislib.XMessage, consumerName string) error {
+	data := []byte(message.Values["data"].(string))
+	messageID := message.ID
+
+	var event ent.TicketEvent
+
+	err := json.Unmarshal(data, &event)
+	if err != nil {
+		return errors.New(fmt.Sprintf("fail to parse message data, %v", err))
+	}
+
+	ticketID := event.TicketID.String()
+
+	var consumerProcessingTicketIDs []string
+	var consumerProcessingMessageIDs []string
+
+	t, isExist := (*s.tickets)[ticketID]
+	if isExist {
+		consumerName = t.ConsumerName
+		consumerProcessingTicketIDs = []string{ticketID}
+		consumerProcessingMessageIDs = append(t.Events, messageID)
+	} else if consumerName == "" {
+		magicNumber := rand.Intn(len(*s.consumers))
+		count := 0
+		for key, value := range *s.consumers {
+			if count == magicNumber {
+				consumerName = key
+				consumerProcessingTicketIDs = append(value.TicketIDs, ticketID)
+				consumerProcessingMessageIDs = []string{messageID}
+				break
+			}
+			count++
+		}
+	}
+
+	consumer := s.redis.CreateConsumer(ctx, s.cfg.STREAM_NAME, s.cfg.STREAM_GROUP_NAME, consumerName)
+	err = consumer.Claim(ctx, s.cfg.STREAM_NAME, messageID)
+	if err != nil {
+		return errors.New(fmt.Sprintf("fail to claim event from ticket_stream, %v", err))
+	}
+
+	{
+		(*s.tickets)[ticketID] = ticketData{
+			ConsumerName: consumerName,
+			Events:       consumerProcessingMessageIDs,
+		}
+		(*s.consumers)[consumerName] = consumerData{
+			HealthURL: (*s.consumers)[consumerName].HealthURL,
+			TicketIDs: consumerProcessingTicketIDs,
+		}
+
+		c, _ := json.Marshal(s.consumers)
+		err = s.consumerTable.SetValue(ctx, c)
+		if err != nil {
+			return errors.New(fmt.Sprintf("can not save consumers table, %v", err))
+
+		}
+		t, _ := json.Marshal(s.tickets)
+		err = s.ticketTable.SetValue(ctx, t)
+		if err != nil {
+			return errors.New(fmt.Sprintf("can not save tickets table, %v", err))
+		}
+	}
+	return nil
+}
+
+func (s masterService) recoverDownConsumers(ctx context.Context) bool {
+	defer time.Sleep(time.Minute)
+
+	// check consumer health
+	offlineConsumers := map[string]consumerData{}
+
+	for consumer, data := range *s.consumers {
+		_, err := http.Get(data.HealthURL)
+		if err != nil {
+			fmt.Printf("consumer offline: %s, healthURL: %v\n", consumer, data.HealthURL)
+			offlineConsumers[consumer] = data
+		}
+	}
+
+	if len(offlineConsumers) <= 0 {
+		return len(*s.consumers) > 0
+	}
+
+	if len(*s.consumers)-len(offlineConsumers) <= 0 {
+		fmt.Printf("no online consumer to delegate, sleep for 2m\n")
+		time.Sleep(2 * time.Minute)
+		return false
+	}
+
+	for consumer := range offlineConsumers {
+		delete((*s.consumers), consumer)
+	}
+
+	for _, data := range offlineConsumers {
+		delegateConsumerRoundRobinCount := 0
+		for _, ticketID := range data.TicketIDs {
+			var delegateConsumer *string
+			{
+				magicNumber := rand.Intn(len(*s.consumers))
+				for key := range *s.consumers {
+					if delegateConsumerRoundRobinCount == magicNumber {
+						delegateConsumer = &key
+						break
+					}
+					delegateConsumerRoundRobinCount++
+				}
+			}
+			if delegateConsumer == nil {
+				continue
+			}
+
+			consumer := s.redis.CreateConsumer(ctx, s.cfg.STREAM_NAME, s.cfg.STREAM_GROUP_NAME, *delegateConsumer)
+			for _, messageID := range (*s.tickets)[ticketID].Events {
+				err := consumer.Claim(ctx, s.cfg.STREAM_NAME, messageID)
+				if err != nil {
+					fmt.Printf("fail to claim event from ticket_stream, %v, %v", messageID, err)
+				}
+			}
+
+			(*s.tickets)[ticketID] = ticketData{
+				ConsumerName: *delegateConsumer,
+				Events:       (*s.tickets)[ticketID].Events,
+			}
+			(*s.consumers)[*delegateConsumer] = consumerData{
+				HealthURL: (*s.consumers)[*delegateConsumer].HealthURL,
+				TicketIDs: append((*s.consumers)[*delegateConsumer].TicketIDs, ticketID),
+			}
+		}
+	}
+
+	// save to redis table
+	{
+		c, _ := json.Marshal(s.consumers)
+		err := s.consumerTable.SetValue(ctx, c)
+		if err != nil {
+			log.Fatal("can not save consumers table")
+		}
+		t, _ := json.Marshal(s.tickets)
+		err = s.ticketTable.SetValue(ctx, t)
+		if err != nil {
+			log.Fatal("can not save tickets table")
+		}
+	}
+
+	return true
+}
+
+func (s masterService) recoverIdleEvent(ctx context.Context) {
+	defer time.Sleep(time.Minute)
+
+	masterConsumer := s.redis.CreateConsumer(ctx, s.cfg.STREAM_NAME, s.cfg.STREAM_GROUP_NAME, s.cfg.MASTER_CONSUMER_NAME)
+	messages, err := masterConsumer.AutoClaim(ctx, s.cfg.STREAM_NAME, 5*time.Minute)
+	if err != nil {
+		fmt.Printf("fail to auto claim event from ticket_stream, %v", err)
+		return
+	}
+	if len(messages) == 0 {
+		return
+	}
+
+	for _, message := range messages {
+		// check if message is processing by any consumer
+		var consumerName string
+
+		{
+			var event ent.TicketEvent
+
+			data := []byte(message.Values["data"].(string))
+			err := json.Unmarshal(data, &event)
+			if err != nil {
+				log.Fatalln("fail to parse message data")
+			}
+
+			ticketID := event.TicketID.String()
+
+			ticket, ok := (*s.tickets)[ticketID]
+			if ok {
+				consumer := (*s.consumers)[ticket.ConsumerName]
+				_, err := http.Get(consumer.HealthURL)
+				if err != nil {
+					fmt.Printf("consumer offline: %s, healthURL: %v\n", ticket.ConsumerName, consumer.HealthURL)
+				} else {
+					consumerName = ticket.ConsumerName
+				}
+			}
+		}
+
+		//
+		err = s.delegateMessage(ctx, message, consumerName)
+		if err != nil {
+			log.Fatal("can not parse ticket event")
+			return
+		}
+	}
 }

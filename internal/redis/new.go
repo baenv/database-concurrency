@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 )
 
 // RedisWrapper Redis wrapper to handle pub/sub calls
